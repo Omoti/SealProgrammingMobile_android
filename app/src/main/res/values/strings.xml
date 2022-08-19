@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">SealProgrammingMobile</string>
+
+    <string name="main_button_camera">カメラ</string>
+    <string name="main_button_connect">つなぐ</string>
+    <string name="main_button_send">おくる</string>
 </resources>
