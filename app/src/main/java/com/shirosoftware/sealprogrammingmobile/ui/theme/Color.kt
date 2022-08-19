@@ -2,7 +2,8 @@ package com.shirosoftware.sealprogrammingmobile.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
+val Primary = Color(0xFF448AFF)
+val PrimaryVariant = Color(0xFF005ECB)
+val BackgroundDark = Color(0xFFE0E0E0)
+
 val Teal200 = Color(0xFF03DAC5)
