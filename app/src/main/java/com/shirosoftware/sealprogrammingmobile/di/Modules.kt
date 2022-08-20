@@ -2,6 +2,7 @@ package com.shirosoftware.sealprogrammingmobile.di
 
 import android.content.Context
 import com.shirosoftware.sealprogrammingmobile.camera.CameraController
+import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
 import dagger.Module
 import dagger.Provides
@@ -20,5 +21,10 @@ class Modules {
     @Provides
     fun provideSealDetector(@ApplicationContext context: Context): SealDetector {
         return SealDetector(context)
+    }
+
+    @Provides
+    fun provideBluetoothController(@ApplicationContext context: Context): BluetoothController {
+        return BluetoothController(context)
     }
 }

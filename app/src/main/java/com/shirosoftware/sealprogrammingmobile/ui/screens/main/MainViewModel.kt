@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shirosoftware.sealprogrammingmobile.camera.CameraController
+import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -17,9 +18,13 @@ import kotlinx.coroutines.launch
 class MainViewModel @Inject constructor(
     private val cameraController: CameraController,
     private val sealDetector: SealDetector,
+    private val bluetoothController: BluetoothController,
 ) : ViewModel() {
     private val _bitmap = MutableStateFlow<Bitmap?>(null)
     val bitmap: StateFlow<Bitmap?> = _bitmap
+
+    private val _bluetoothState = MutableStateFlow<BluetoothState>(BluetoothState.Searching)
+    private val bluetoothState: StateFlow<BluetoothState> = _bluetoothState
 
     fun dispatchTakePicture(): Intent? =
         cameraController.dispatchTakePictureIntent()
