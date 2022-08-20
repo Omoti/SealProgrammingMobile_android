@@ -1,7 +1,6 @@
 package com.shirosoftware.sealprogrammingmobile.ui.screens.main
 
 import android.app.Activity.RESULT_OK
-import android.graphics.Bitmap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -21,8 +20,7 @@ import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.ElectricCar
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,12 +36,12 @@ import com.shirosoftware.sealprogrammingmobile.ui.theme.SealProgrammingMobileThe
 
 @Composable
 fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
-    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
+    val bitmap = viewModel.bitmap.collectAsState()
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
         onResult = { result ->
             if (result.resultCode != RESULT_OK) return@rememberLauncherForActivityResult
-            bitmap.value = viewModel.loadCapturedImage()
+            viewModel.loadCapturedImage()
         }
     )
 
