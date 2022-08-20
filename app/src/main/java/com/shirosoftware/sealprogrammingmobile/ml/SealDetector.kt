@@ -32,10 +32,11 @@ class SealDetector @Inject constructor(private val context: Context) {
         val resultToDisplay = results.map {
             // Get the top-1 category and craft the display text
             val category = it.categories.first()
-            val text = "${category.label}, ${category.score.times(100).toInt()}%"
+            val label = category.label
+            val score = category.score
 
             // Create a data object to display the detection result
-            DetectionResult(it.boundingBox, text)
+            DetectionResult(it.boundingBox, label, score)
         }
 
         return resultToDisplay
@@ -56,8 +57,10 @@ class SealDetector @Inject constructor(private val context: Context) {
         pen.textAlign = Paint.Align.LEFT
 
         detectionResults.forEach {
+            val seal = sealByLabel(it.label)
+
             // draw bounding box
-            pen.color = Color.RED
+            pen.color = seal.color
             pen.strokeWidth = 8F
             pen.style = Paint.Style.STROKE
             val box = it.boundingBox
@@ -71,7 +74,7 @@ class SealDetector @Inject constructor(private val context: Context) {
             pen.strokeWidth = 2F
 
             pen.textSize = MAX_FONT_SIZE
-            pen.getTextBounds(it.text, 0, it.text.length, tagSize)
+            pen.getTextBounds(seal.text, 0, seal.text.length, tagSize)
             val fontSize: Float = pen.textSize * box.width() / tagSize.width()
 
             // adjust the font size so texts are inside the bounding box
@@ -80,16 +83,20 @@ class SealDetector @Inject constructor(private val context: Context) {
             var margin = (box.width() - tagSize.width()) / 2.0F
             if (margin < 0F) margin = 0F
             canvas.drawText(
-                it.text, box.left + margin,
+                seal.text, box.left + margin,
                 box.top + tagSize.height().times(1F), pen
             )
         }
         return outputBitmap
     }
 
+    private fun sealByLabel(label: String): Seal {
+        return Seal.values().find { it.label == label } ?: Seal.Forward
+    }
+
     companion object {
         private const val MODEL_FILE_NAME = "seals_model.tflite"
         private const val THRESHOLD = 0.5f
-        private const val MAX_FONT_SIZE = 96F
+        private const val MAX_FONT_SIZE = 48f
     }
 }
