@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.shirosoftware.sealprogrammingmobile.R
 import com.shirosoftware.sealprogrammingmobile.camera.CameraController
+import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
 import com.shirosoftware.sealprogrammingmobile.ui.theme.BackgroundDark
 import com.shirosoftware.sealprogrammingmobile.ui.theme.SealProgrammingMobileTheme
@@ -96,7 +97,13 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun MainScreenPreview() {
+    val context = LocalContext.current
     SealProgrammingMobileTheme {
-        MainScreen(MainViewModel(CameraController(LocalContext.current)))
+        MainScreen(
+            MainViewModel(
+                CameraController(context),
+                SealDetector(context)
+            )
+        )
     }
 }

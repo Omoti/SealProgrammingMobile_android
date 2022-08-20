@@ -2,6 +2,7 @@ package com.shirosoftware.sealprogrammingmobile.di
 
 import android.content.Context
 import com.shirosoftware.sealprogrammingmobile.camera.CameraController
+import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -10,9 +11,14 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-class CameraModule {
+class Modules {
     @Provides
     fun provideCameraController(@ApplicationContext context: Context): CameraController {
         return CameraController(context)
+    }
+
+    @Provides
+    fun provideSealDetector(@ApplicationContext context: Context): SealDetector {
+        return SealDetector(context)
     }
 }
