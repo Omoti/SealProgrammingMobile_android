@@ -39,7 +39,11 @@ class SealDetector @Inject constructor(private val context: Context) {
             DetectionResult(it.boundingBox, label, score)
         }
 
-        return resultToDisplay
+        // 左下から列ごとに並び替え
+        // 左右位置に重みをつける
+        return resultToDisplay.sortedWith(compareBy {
+            it.boundingBox.left * 5 + (bitmap.height - it.boundingBox.top)
+        })
     }
 
 
@@ -56,14 +60,14 @@ class SealDetector @Inject constructor(private val context: Context) {
         val pen = Paint()
         pen.textAlign = Paint.Align.LEFT
 
-        detectionResults.forEach {
-            val seal = sealByLabel(it.label)
+        detectionResults.withIndex().forEach {
+            val seal = sealByLabel(it.value.label)
 
             // draw bounding box
             pen.color = seal.color
             pen.strokeWidth = 8F
             pen.style = Paint.Style.STROKE
-            val box = it.boundingBox
+            val box = it.value.boundingBox
             canvas.drawRect(box, pen)
 
             val tagSize = Rect(0, 0, 0, 0)
@@ -73,7 +77,7 @@ class SealDetector @Inject constructor(private val context: Context) {
             pen.color = Color.YELLOW
             pen.strokeWidth = 2F
 
-            val text = "${seal.text} (${it.score.times(100).toInt()}%)"
+            val text = "${it.index}.${seal.text} ${it.value.score.times(100).toInt()}%"
             pen.textSize = MAX_FONT_SIZE
             pen.getTextBounds(text, 0, text.length, tagSize)
             val fontSize: Float = pen.textSize * box.width() / tagSize.width()
