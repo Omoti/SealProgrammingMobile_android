@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -19,8 +22,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.ElectricCar
 import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,7 +39,9 @@ import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
 import com.shirosoftware.sealprogrammingmobile.ui.theme.BackgroundDark
 import com.shirosoftware.sealprogrammingmobile.ui.theme.SealProgrammingMobileTheme
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
     val bitmap = viewModel.bitmap.collectAsState()
@@ -46,49 +53,63 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
         }
     )
 
+    val scope = rememberCoroutineScope()
+    val sheetState = rememberModalBottomSheetState(
+        ModalBottomSheetValue.Hidden
+    )
+
     Scaffold(topBar = {
         TopAppBar(title = { Text(text = stringResource(id = R.string.app_name)) })
     }) {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .background(Color.White),
-        ) {
-            Box(
-                modifier = Modifier
-                    .aspectRatio(3.0f / 4.0f)
-                    .fillMaxWidth()
-            ) {
-                bitmap.value?.let {
-                    Image(
-                        bitmap = it.asImageBitmap(),
-                        contentDescription = null,
-                    )
-                }
+        ModalBottomSheetLayout(
+            sheetState = sheetState,
+            sheetContent = {
+                Text(text = "bottom sheet")
             }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
+            Column(
                 modifier = modifier
                     .fillMaxSize()
-                    .background(BackgroundDark)
+                    .background(Color.White),
             ) {
-                CircleButton(
-                    Icons.Default.PhotoCamera,
-                    stringResource(id = R.string.main_button_camera),
-                    onClick = {
-                        viewModel.dispatchTakePicture()?.let {
-                            launcher.launch(it)
-                        }
-                    })
-                CircleButton(
-                    Icons.Default.Bluetooth,
-                    stringResource(id = R.string.main_button_connect),
-                    onClick = { /*TODO*/ })
-                CircleButton(
-                    Icons.Default.ElectricCar,
-                    stringResource(id = R.string.main_button_send),
-                    onClick = { /*TODO*/ })
+                Box(
+                    modifier = Modifier
+                        .aspectRatio(3.0f / 4.0f)
+                        .fillMaxWidth()
+                ) {
+                    bitmap.value?.let {
+                        Image(
+                            bitmap = it.asImageBitmap(),
+                            contentDescription = null,
+                        )
+                    }
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = modifier
+                        .fillMaxSize()
+                        .background(BackgroundDark)
+                ) {
+                    CircleButton(
+                        Icons.Default.PhotoCamera,
+                        stringResource(id = R.string.main_button_camera),
+                        onClick = {
+                            viewModel.dispatchTakePicture()?.let {
+                                launcher.launch(it)
+                            }
+                        })
+                    CircleButton(
+                        Icons.Default.Bluetooth,
+                        stringResource(id = R.string.main_button_connect),
+                        onClick = {
+                            scope.launch { sheetState.show() }
+                        })
+                    CircleButton(
+                        Icons.Default.ElectricCar,
+                        stringResource(id = R.string.main_button_send),
+                        onClick = { /*TODO*/ })
+                }
             }
         }
     }
