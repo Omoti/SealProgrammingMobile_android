@@ -73,8 +73,9 @@ class SealDetector @Inject constructor(private val context: Context) {
             pen.color = Color.YELLOW
             pen.strokeWidth = 2F
 
+            val text = "${seal.text} (${it.score.times(100).toInt()}%)"
             pen.textSize = MAX_FONT_SIZE
-            pen.getTextBounds(seal.text, 0, seal.text.length, tagSize)
+            pen.getTextBounds(text, 0, text.length, tagSize)
             val fontSize: Float = pen.textSize * box.width() / tagSize.width()
 
             // adjust the font size so texts are inside the bounding box
@@ -83,7 +84,7 @@ class SealDetector @Inject constructor(private val context: Context) {
             var margin = (box.width() - tagSize.width()) / 2.0F
             if (margin < 0F) margin = 0F
             canvas.drawText(
-                seal.text, box.left + margin,
+                text, box.left + margin,
                 box.top + tagSize.height().times(1F), pen
             )
         }
