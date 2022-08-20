@@ -2,6 +2,7 @@ package com.shirosoftware.sealprogrammingmobile.ui.navigation
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
@@ -15,7 +16,7 @@ fun AppNavHost(navController: NavHostController) {
         startDestination = "main",
     ) {
         composable("main") {
-            MainScreen()
+            MainScreen(hiltViewModel())
         }
     }
 }
