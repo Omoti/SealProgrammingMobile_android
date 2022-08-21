@@ -57,7 +57,11 @@ class BluetoothController(private val context: Context) {
     }
 
     private fun unRegisterReceiver() {
-        context.unregisterReceiver(receiver)
+        try {
+            context.unregisterReceiver(receiver)
+        } catch (e: IllegalArgumentException) {
+            // not registered
+        }
     }
 
     fun startDiscovery() {

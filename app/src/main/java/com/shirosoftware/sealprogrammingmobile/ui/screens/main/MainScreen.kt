@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.ElectricCar
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -59,6 +60,15 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
         ModalBottomSheetValue.Hidden
     )
     val bluetoothState = viewModel.bluetoothState.collectAsState()
+
+    // デバイス一覧で検索状態を連動
+    LaunchedEffect(sheetState.isVisible) {
+        if (sheetState.isVisible) {
+            viewModel.startSearchDevices()
+        } else {
+            viewModel.stopSearchDevices()
+        }
+    }
 
     Scaffold(topBar = {
         TopAppBar(title = { Text(text = stringResource(id = R.string.app_name)) })
@@ -99,6 +109,7 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                         onClick = {
                             viewModel.dispatchTakePicture()?.let {
                                 launcher.launch(it)
+                                viewModel.startSearchDevices()
                             }
                         })
                     CircleButton(
