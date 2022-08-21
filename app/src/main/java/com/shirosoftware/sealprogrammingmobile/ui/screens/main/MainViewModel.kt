@@ -53,5 +53,6 @@ class MainViewModel @Inject constructor(
 
     fun stopSearchDevices() {
         bluetoothController.cancelDiscovery()
+        _bluetoothState.value = BluetoothState.Searching
     }
 }
