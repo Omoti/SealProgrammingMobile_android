@@ -4,4 +4,7 @@
     <string name="main_button_camera">カメラ</string>
     <string name="main_button_connect">つなぐ</string>
     <string name="main_button_send">おくる</string>
+
+    <string name="bluetooth_searching">デバイスをさがしています…</string>
+    <string name="bluetooth_error">エラー</string>
 </resources>

@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.shirosoftware.sealprogrammingmobile.R
 import com.shirosoftware.sealprogrammingmobile.camera.CameraController
+import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
 import com.shirosoftware.sealprogrammingmobile.ui.theme.BackgroundDark
@@ -57,6 +58,7 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
     val sheetState = rememberModalBottomSheetState(
         ModalBottomSheetValue.Hidden
     )
+    val bluetoothState = viewModel.bluetoothState.collectAsState()
 
     Scaffold(topBar = {
         TopAppBar(title = { Text(text = stringResource(id = R.string.app_name)) })
@@ -64,7 +66,7 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
         ModalBottomSheetLayout(
             sheetState = sheetState,
             sheetContent = {
-                Text(text = "bottom sheet")
+                DeviceList(state = bluetoothState.value)
             }
         ) {
             Column(
@@ -123,7 +125,8 @@ fun MainScreenPreview() {
         MainScreen(
             MainViewModel(
                 CameraController(context),
-                SealDetector(context)
+                SealDetector(context),
+                BluetoothController(context),
             )
         )
     }

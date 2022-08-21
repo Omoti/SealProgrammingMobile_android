@@ -24,7 +24,7 @@ class MainViewModel @Inject constructor(
     val bitmap: StateFlow<Bitmap?> = _bitmap
 
     private val _bluetoothState = MutableStateFlow<BluetoothState>(BluetoothState.Searching)
-    private val bluetoothState: StateFlow<BluetoothState> = _bluetoothState
+    val bluetoothState: StateFlow<BluetoothState> = _bluetoothState
 
     fun dispatchTakePicture(): Intent? =
         cameraController.dispatchTakePictureIntent()
@@ -38,5 +38,20 @@ class MainViewModel @Inject constructor(
                 _bitmap.value = sealDetector.drawDetectionResult(it, result)
             }
         }
+    }
+
+    fun startSearchDevices() {
+        bluetoothController.start()
+        viewModelScope.launch {
+            bluetoothController.devices.collect {
+                _bluetoothState.value = BluetoothState.Found(it)
+            }
+
+            bluetoothController.startDiscovery()
+        }
+    }
+
+    fun stopSearchDevices() {
+        bluetoothController.cancelDiscovery()
     }
 }
