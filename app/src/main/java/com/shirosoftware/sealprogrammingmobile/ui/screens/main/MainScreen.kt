@@ -1,5 +1,6 @@
 package com.shirosoftware.sealprogrammingmobile.ui.screens.main
 
+import android.Manifest
 import android.app.Activity.RESULT_OK
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,11 +13,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bluetooth
@@ -25,6 +28,7 @@ import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -34,6 +38,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.shirosoftware.sealprogrammingmobile.R
 import com.shirosoftware.sealprogrammingmobile.camera.CameraController
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
@@ -43,7 +49,7 @@ import com.shirosoftware.sealprogrammingmobile.ui.theme.BackgroundDark
 import com.shirosoftware.sealprogrammingmobile.ui.theme.SealProgrammingMobileTheme
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalPermissionsApi::class)
 @Composable
 fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
     val bitmap = viewModel.bitmap.collectAsState()
@@ -61,8 +67,22 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
     )
     val bluetoothState = viewModel.bluetoothState.collectAsState()
 
+    val permissionState =
+        rememberMultiplePermissionsState(
+            listOf(
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.BLUETOOTH_CONNECT,
+            )
+        )
+    if (!permissionState.allPermissionsGranted) {
+        SideEffect {
+            permissionState.launchMultiplePermissionRequest()
+        }
+    }
+
     // デバイス一覧で検索状態を連動
-    LaunchedEffect(sheetState.isVisible) {
+    LaunchedEffect(sheetState.isVisible, permissionState.allPermissionsGranted) {
+        if (!permissionState.allPermissionsGranted) return@LaunchedEffect
         if (sheetState.isVisible) {
             viewModel.startSearchDevices()
         } else {
@@ -126,6 +146,20 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
             }
         }
     }
+}
+
+
+@Composable
+fun PermissionRationaleDialog(onDialogResult: () -> Unit) {
+    AlertDialog(
+        text = { Text("Rationale") },
+        onDismissRequest = {},
+        confirmButton = {
+            TextButton(onClick = onDialogResult) {
+                Text("OK")
+            }
+        }
+    )
 }
 
 @Preview
