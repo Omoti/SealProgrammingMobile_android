@@ -1,5 +1,7 @@
 package com.shirosoftware.sealprogrammingmobile.ui.screens.main
 
+import android.bluetooth.BluetoothDevice
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ListItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,7 +24,11 @@ import com.shirosoftware.sealprogrammingmobile.R
 import com.shirosoftware.sealprogrammingmobile.ui.theme.SealProgrammingMobileTheme
 
 @Composable
-fun DeviceList(state: BluetoothState, modifier: Modifier = Modifier) {
+fun DeviceList(
+    state: BluetoothState,
+    modifier: Modifier = Modifier,
+    onClickItem: (device: BluetoothDevice) -> Unit,
+) {
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = modifier
@@ -41,10 +50,21 @@ fun DeviceList(state: BluetoothState, modifier: Modifier = Modifier) {
                 LazyColumn {
                     items(state.devices.size) { index ->
                         val device = state.devices[index]
-                        Text(device.name)
+                        DeviceItem(device.name) {
+                            onClickItem(device)
+                        }
+                        Divider()
                     }
                 }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun DeviceItem(name: String, onClick: () -> Unit) {
+    ListItem(modifier = Modifier.clickable { onClick.invoke() }) {
+        Text(text = name)
     }
 }
 
@@ -52,7 +72,7 @@ fun DeviceList(state: BluetoothState, modifier: Modifier = Modifier) {
 @Composable
 fun DeviceListPreview_Searching() {
     SealProgrammingMobileTheme {
-        DeviceList(state = BluetoothState.Searching)
+        DeviceList(state = BluetoothState.Searching) {}
     }
 }
 
@@ -64,7 +84,7 @@ fun DeviceListPreview_Find() {
             state = BluetoothState.Found(
                 listOf()
             )
-        )
+        ) {}
     }
 }
 
@@ -72,6 +92,14 @@ fun DeviceListPreview_Find() {
 @Composable
 fun DeviceListPreview_Error() {
     SealProgrammingMobileTheme {
-        DeviceList(state = BluetoothState.Error(Throwable("エラー")))
+        DeviceList(state = BluetoothState.Error(Throwable("エラー"))) {}
+    }
+}
+
+@Preview
+@Composable
+fun DeviceItemPreview() {
+    SealProgrammingMobileTheme {
+        DeviceItem(name = "device") {}
     }
 }

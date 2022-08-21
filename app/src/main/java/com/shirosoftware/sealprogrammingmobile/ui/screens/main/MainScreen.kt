@@ -96,7 +96,10 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
         ModalBottomSheetLayout(
             sheetState = sheetState,
             sheetContent = {
-                DeviceList(state = bluetoothState.value)
+                DeviceList(state = bluetoothState.value) { device ->
+                    scope.launch { sheetState.hide() }
+                    // TODO : デバイス接続
+                }
             }
         ) {
             Column(
