@@ -85,8 +85,8 @@ class BluetoothController(private val context: Context) {
                     val device: BluetoothDevice? =
                         intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
 
-                    device?.let {
-                        val deviceName = device.name
+                    // Add list if name is not null.
+                    device?.name?.let {
                         val deviceHardwareAddress = device.address // MAC address
 
                         if (_devices.find { it.address == deviceHardwareAddress } == null) {
