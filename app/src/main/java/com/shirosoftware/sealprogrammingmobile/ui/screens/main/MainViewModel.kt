@@ -1,5 +1,6 @@
 package com.shirosoftware.sealprogrammingmobile.ui.screens.main
 
+import android.bluetooth.BluetoothDevice
 import android.content.Intent
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
@@ -25,6 +26,9 @@ class MainViewModel @Inject constructor(
 
     private val _bluetoothState = MutableStateFlow<BluetoothState>(BluetoothState.Searching)
     val bluetoothState: StateFlow<BluetoothState> = _bluetoothState
+
+    private val _selectedDevice = MutableStateFlow<BluetoothDevice?>(null)
+    val selectedDevice: StateFlow<BluetoothDevice?> = _selectedDevice
 
     fun dispatchTakePicture(): Intent? =
         cameraController.dispatchTakePictureIntent()
@@ -57,5 +61,9 @@ class MainViewModel @Inject constructor(
     fun stopSearchDevices() {
         bluetoothController.cancelDiscovery()
         _bluetoothState.value = BluetoothState.Searching
+    }
+
+    fun connect(device: BluetoothDevice) {
+        _selectedDevice.value = device
     }
 }

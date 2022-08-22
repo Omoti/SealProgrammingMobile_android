@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -38,6 +39,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.shirosoftware.sealprogrammingmobile.R
@@ -66,6 +68,8 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
         ModalBottomSheetValue.Hidden
     )
     val bluetoothState = viewModel.bluetoothState.collectAsState()
+
+    val device = viewModel.selectedDevice.collectAsState()
 
     val permissionState =
         rememberMultiplePermissionsState(
@@ -102,7 +106,7 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
             sheetContent = {
                 DeviceList(state = bluetoothState.value) { device ->
                     scope.launch { sheetState.hide() }
-                    // TODO : デバイス接続
+                    viewModel.connect(device)
                 }
             }
         ) {
@@ -122,6 +126,14 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                             contentDescription = null,
                         )
                     }
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = device.value?.name ?: "")
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
