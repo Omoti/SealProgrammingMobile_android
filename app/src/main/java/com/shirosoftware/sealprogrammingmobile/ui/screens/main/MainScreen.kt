@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog
+import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
@@ -127,6 +128,7 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                         )
                     }
                 }
+                Divider()
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
