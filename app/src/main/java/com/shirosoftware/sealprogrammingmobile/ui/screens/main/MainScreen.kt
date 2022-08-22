@@ -80,8 +80,12 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
         }
     }
 
+    LaunchedEffect(permissionState.allPermissionsGranted) {
+        viewModel.initDeviceController()
+    }
+
     // デバイス一覧で検索状態を連動
-    LaunchedEffect(sheetState.isVisible, permissionState.allPermissionsGranted) {
+    LaunchedEffect(sheetState.isVisible) {
         if (!permissionState.allPermissionsGranted) return@LaunchedEffect
         if (sheetState.isVisible) {
             viewModel.startSearchDevices()

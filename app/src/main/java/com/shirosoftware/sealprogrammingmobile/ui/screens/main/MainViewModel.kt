@@ -40,8 +40,11 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun startSearchDevices() {
+    fun initDeviceController() {
         bluetoothController.start()
+    }
+
+    fun startSearchDevices() {
         viewModelScope.launch {
             bluetoothController.devices.collect {
                 _bluetoothState.value = BluetoothState.Found(it)
