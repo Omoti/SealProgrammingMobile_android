@@ -2,6 +2,7 @@ package com.shirosoftware.sealprogrammingmobile.ui.screens.main
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -75,10 +76,16 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
 
     val permissionState =
         rememberMultiplePermissionsState(
-            listOf(
-                Manifest.permission.BLUETOOTH_SCAN,
-                Manifest.permission.BLUETOOTH_CONNECT,
-            )
+            if (Build.VERSION.SDK_INT >= 31) {
+                listOf(
+                    Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                )
+            } else {
+                listOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                )
+            }
         )
     if (!permissionState.allPermissionsGranted) {
         SideEffect {
