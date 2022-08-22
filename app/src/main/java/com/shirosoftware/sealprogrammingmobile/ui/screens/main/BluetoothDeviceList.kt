@@ -2,6 +2,7 @@ package com.shirosoftware.sealprogrammingmobile.ui.screens.main
 
 import android.bluetooth.BluetoothDevice
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,7 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
@@ -21,6 +24,7 @@ import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,12 +37,20 @@ fun DeviceList(
     modifier: Modifier = Modifier,
     onClickItem: (device: BluetoothDevice) -> Unit,
 ) {
-    Box(
-        contentAlignment = Alignment.TopCenter,
+    Column(
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxSize()
             .padding(vertical = 12.dp)
     ) {
+        Divider(
+            modifier = Modifier
+                .height(8.dp)
+                .width(88.dp)
+                .clip(CircleShape)
+        )
+        Spacer(modifier = Modifier.height(12.dp))
         when (state) {
             is BluetoothState.Searching -> {
                 Column(
@@ -66,7 +78,7 @@ fun DeviceList(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(12.dp),
+                                .padding(24.dp),
                         ) {
                             CircularProgressIndicator()
                         }
