@@ -71,6 +71,7 @@ class MainViewModel @Inject constructor(
     fun disconnect() {
         _selectedDevice.value?.let {
             bluetoothController.disconnect()
+            _selectedDevice.value = null
         }
     }
 }
