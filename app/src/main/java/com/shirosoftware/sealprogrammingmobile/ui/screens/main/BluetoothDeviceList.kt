@@ -6,14 +6,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
 import androidx.compose.material.ListItem
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,11 +37,13 @@ fun DeviceList(
         contentAlignment = Alignment.TopCenter,
         modifier = modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(vertical = 12.dp)
     ) {
         when (state) {
             is BluetoothState.Searching -> {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
                     Text(text = stringResource(id = R.string.bluetooth_searching))
                     Spacer(modifier = Modifier.height(24.dp))
                     CircularProgressIndicator()
@@ -50,10 +56,20 @@ fun DeviceList(
                 LazyColumn {
                     items(state.devices.size) { index ->
                         val device = state.devices[index]
-                        DeviceItem(device.name) {
+                        DeviceItem(device.name ?: device.address) {
                             onClickItem(device)
                         }
                         Divider()
+                    }
+                    item {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
                 }
         }
@@ -63,7 +79,10 @@ fun DeviceList(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DeviceItem(name: String, onClick: () -> Unit) {
-    ListItem(modifier = Modifier.clickable { onClick.invoke() }) {
+    ListItem(modifier = Modifier
+        .clickable { onClick.invoke() }
+        .padding(8.dp),
+        icon = { Icon(Icons.Default.Bluetooth, contentDescription = null) }) {
         Text(text = name)
     }
 }
