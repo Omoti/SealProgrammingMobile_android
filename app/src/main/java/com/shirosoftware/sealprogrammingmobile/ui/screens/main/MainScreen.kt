@@ -109,18 +109,18 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
         }
     }
 
-    Scaffold(topBar = {
-        TopAppBar(title = { Text(text = stringResource(id = R.string.app_name)) })
-    }) {
-        ModalBottomSheetLayout(
-            sheetState = sheetState,
-            sheetContent = {
-                DeviceList(state = bluetoothState.value) { device ->
-                    scope.launch { sheetState.hide() }
-                    viewModel.connect(device)
-                }
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetContent = {
+            DeviceList(state = bluetoothState.value) { device ->
+                scope.launch { sheetState.hide() }
+                viewModel.connect(device)
             }
-        ) {
+        }
+    ) {
+        Scaffold(topBar = {
+            TopAppBar(title = { Text(text = stringResource(id = R.string.app_name)) })
+        }) {
             Column(
                 modifier = modifier
                     .fillMaxSize()
