@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.ElectricCar
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
@@ -38,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,6 +57,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class, ExperimentalPermissionsApi::class)
 @Composable
 fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     val bitmap = viewModel.bitmap.collectAsState()
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
@@ -82,6 +86,12 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
     if (!permissionState.allPermissionsGranted) {
         SideEffect {
             permissionState.launchMultiplePermissionRequest()
+        }
+    }
+
+    DisposableEffect(viewModel) {
+        onDispose {
+            viewModel.disconnect()
         }
     }
 

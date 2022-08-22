@@ -65,5 +65,12 @@ class MainViewModel @Inject constructor(
 
     fun connect(device: BluetoothDevice) {
         _selectedDevice.value = device
+        bluetoothController.connect(device)
+    }
+
+    fun disconnect() {
+        _selectedDevice.value?.let {
+            bluetoothController.disconnect()
+        }
     }
 }
