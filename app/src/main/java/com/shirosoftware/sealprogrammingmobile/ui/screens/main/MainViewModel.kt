@@ -6,7 +6,9 @@ import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shirosoftware.sealprogrammingmobile.camera.CameraController
+import com.shirosoftware.sealprogrammingmobile.converter.DetectionResultsConverter
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
+import com.shirosoftware.sealprogrammingmobile.ml.DetectionResult
 import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -30,6 +32,8 @@ class MainViewModel @Inject constructor(
     private val _selectedDevice = MutableStateFlow<BluetoothDevice?>(null)
     val selectedDevice: StateFlow<BluetoothDevice?> = _selectedDevice
 
+    private var results: List<DetectionResult>? = null
+
     fun dispatchTakePicture(): Intent? =
         cameraController.dispatchTakePictureIntent()
 
@@ -37,9 +41,10 @@ class MainViewModel @Inject constructor(
         _bitmap.value = cameraController.getCapturedImage()
 
         viewModelScope.launch(Dispatchers.IO) {
-            _bitmap.value?.let {
-                val result = sealDetector.runObjectDetection(it)
-                _bitmap.value = sealDetector.drawDetectionResult(it, result)
+            _bitmap.value?.let { bitmap ->
+                val detectionResults = sealDetector.runObjectDetection(bitmap)
+                _bitmap.value = sealDetector.drawDetectionResult(bitmap, detectionResults)
+                results = detectionResults
             }
         }
     }
@@ -72,6 +77,13 @@ class MainViewModel @Inject constructor(
         _selectedDevice.value?.let {
             bluetoothController.disconnect()
             _selectedDevice.value = null
+        }
+    }
+
+    fun sendCommand() {
+        results?.let {
+            val commands = DetectionResultsConverter.convertResultsToCommands(it)
+            bluetoothController.send(commands)
         }
     }
 }

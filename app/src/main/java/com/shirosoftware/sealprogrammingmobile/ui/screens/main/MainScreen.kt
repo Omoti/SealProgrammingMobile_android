@@ -176,7 +176,7 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                     CircleButton(
                         Icons.Default.ElectricCar,
                         stringResource(id = R.string.main_button_send),
-                        onClick = { /*TODO*/ })
+                        onClick = { viewModel.sendCommand() })
                 }
             }
         }

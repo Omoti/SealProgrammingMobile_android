@@ -133,6 +133,7 @@ class BluetoothController(private val context: Context) {
     }
 
     fun send(data: String) {
+        bluetoothService.sendCommandToBluetoothDevice(SerialCommand)
         bluetoothService.sendCommandToBluetoothDevice(data)
     }
 }
