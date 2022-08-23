@@ -3,7 +3,7 @@ package com.shirosoftware.sealprogrammingmobile.converter
 import com.shirosoftware.sealprogrammingmobile.device.SerialCommand
 import com.shirosoftware.sealprogrammingmobile.domain.Seal
 
-fun Seal.toSerialCommand(): Char {
+fun Seal.toSerialCommand(): String {
     return when (this) {
         Seal.Forward -> SerialCommand.forward
         Seal.Back -> SerialCommand.back
