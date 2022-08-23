@@ -120,6 +120,11 @@ class BluetoothController(private val context: Context) {
     }
 
     fun connect(device: BluetoothDevice) {
+        if (device.bondState == BluetoothDevice.BOND_NONE) {
+            device.createBond()
+            return
+        }
+
         bluetoothService.connectBluetooth(device)
     }
 
