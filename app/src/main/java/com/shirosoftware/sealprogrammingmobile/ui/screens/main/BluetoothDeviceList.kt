@@ -68,7 +68,10 @@ fun DeviceList(
                 LazyColumn {
                     items(state.devices.size) { index ->
                         val device = state.devices[index]
-                        DeviceItem(device.name ?: device.address) {
+                        DeviceItem(
+                            device.name ?: device.address,
+                            device.bondState == BluetoothDevice.BOND_BONDED,
+                        ) {
                             onClickItem(device)
                         }
                         Divider()
@@ -90,11 +93,16 @@ fun DeviceList(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DeviceItem(name: String, onClick: () -> Unit) {
+fun DeviceItem(name: String, isBonded: Boolean, onClick: () -> Unit) {
     ListItem(modifier = Modifier
         .clickable { onClick.invoke() }
         .padding(8.dp),
-        icon = { Icon(Icons.Default.Bluetooth, contentDescription = null) }) {
+        icon = {
+            if (isBonded) Icon(
+                Icons.Default.Bluetooth,
+                contentDescription = null
+            )
+        }) {
         Text(text = name)
     }
 }
@@ -131,6 +139,6 @@ fun DeviceListPreview_Error() {
 @Composable
 fun DeviceItemPreview() {
     SealProgrammingMobileTheme {
-        DeviceItem(name = "device") {}
+        DeviceItem(name = "device", false) {}
     }
 }
