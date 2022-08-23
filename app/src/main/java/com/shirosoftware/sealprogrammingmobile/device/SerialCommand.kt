@@ -1,6 +1,6 @@
 package com.shirosoftware.sealprogrammingmobile.device
 
-class SealCommand {
+class SerialCommand {
     companion object {
         // -- !: コマンドバッファのクリア。
         const val clear = '!';

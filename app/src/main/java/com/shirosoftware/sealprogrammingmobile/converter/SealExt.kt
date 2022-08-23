@@ -1,5 +1,6 @@
-package com.shirosoftware.sealprogrammingmobile.device
+package com.shirosoftware.sealprogrammingmobile.converter
 
+import com.shirosoftware.sealprogrammingmobile.device.SealCommand
 import com.shirosoftware.sealprogrammingmobile.domain.Seal
 
 fun Seal.toSerialCommand(): Char {
