@@ -1,4 +1,4 @@
-package com.shirosoftware.sealprogrammingmobile.ml
+package com.shirosoftware.sealprogrammingmobile.domain
 
 import android.graphics.Color
 
