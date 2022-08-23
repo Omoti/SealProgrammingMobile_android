@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
+import com.shirosoftware.sealprogrammingmobile.device.SerialCommand
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -133,7 +134,24 @@ class BluetoothController(private val context: Context) {
     }
 
     fun send(data: String) {
-        bluetoothService.sendCommandToBluetoothDevice(SerialCommand)
-        bluetoothService.sendCommandToBluetoothDevice(data)
+        // 転送中LED点灯
+        bluetoothService.sendCommandToBluetoothDevice(SerialCommand.ledRed100)
+
+        // クリア
+        bluetoothService.sendCommandToBluetoothDevice(SerialCommand.clear)
+
+        // 点滅
+        bluetoothService.sendCommandToBluetoothDevice(SerialCommand.blink)
+
+        // 1文字ずつ送る
+        data.map {
+            bluetoothService.sendCommandToBluetoothDevice(it.toString())
+        }
+
+        // ゴール
+        bluetoothService.sendCommandToBluetoothDevice(SerialCommand.goal)
+
+        // 転送中LED消灯
+        bluetoothService.sendCommandToBluetoothDevice(SerialCommand.ledRed0)
     }
 }
