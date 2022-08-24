@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shirosoftware.sealprogrammingmobile.camera.CameraController
 import com.shirosoftware.sealprogrammingmobile.converter.DetectionResultsConverter
+import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnection
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.ml.DetectionResult
 import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
@@ -22,6 +23,7 @@ class MainViewModel @Inject constructor(
     private val cameraController: CameraController,
     private val sealDetector: SealDetector,
     private val bluetoothController: BluetoothController,
+    private val bluetoothConnection: BluetoothConnection,
 ) : ViewModel() {
     private val _bitmap = MutableStateFlow<Bitmap?>(null)
     val bitmap: StateFlow<Bitmap?> = _bitmap
@@ -33,6 +35,8 @@ class MainViewModel @Inject constructor(
     val selectedDevice: StateFlow<BluetoothDevice?> = _selectedDevice
 
     private var results: List<DetectionResult>? = null
+
+    val connectionState = bluetoothConnection.state
 
     fun dispatchTakePicture(): Intent? =
         cameraController.dispatchTakePictureIntent()
@@ -70,13 +74,17 @@ class MainViewModel @Inject constructor(
 
     fun connect(device: BluetoothDevice) {
         _selectedDevice.value = device
-        bluetoothController.connect(device)
+
+        viewModelScope.launch {
+            bluetoothConnection.connect(device)
+        }
     }
 
     fun disconnect() {
-        _selectedDevice.value?.let {
-            bluetoothController.disconnect()
-            _selectedDevice.value = null
+        _selectedDevice.value = null
+
+        viewModelScope.launch {
+            bluetoothConnection.disconnect()
         }
     }
 
