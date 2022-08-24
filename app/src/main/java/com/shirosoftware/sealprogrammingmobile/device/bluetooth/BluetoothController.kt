@@ -14,12 +14,17 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-class BluetoothController(private val context: Context) {
+class BluetoothController(
+    private val context: Context,
+    private val connection: BluetoothConnection,
+) {
     private val bluetoothAdapter: BluetoothAdapter =
         context.getSystemService(BluetoothManager::class.java).adapter
     private val _devices: MutableList<BluetoothDevice> = mutableListOf()
 
     private lateinit var bluetoothService: BluetoothService
+
+    val connectionState = connection.state
 
     interface DiscoverCallback {
         fun foundDevice(device: BluetoothDevice)
@@ -29,8 +34,8 @@ class BluetoothController(private val context: Context) {
 
     val devices: Flow<List<BluetoothDevice>> = callbackFlow {
         _devices.clear()
-        _devices.addAll(loadPairedDevices().toList())
-        trySend(_devices)
+//        _devices.addAll(loadPairedDevices().toList())
+//        trySend(_devices)
 
         discoverCallback = object : DiscoverCallback {
             override fun foundDevice(device: BluetoothDevice) {
@@ -120,17 +125,17 @@ class BluetoothController(private val context: Context) {
         })
     }
 
-    fun connect(device: BluetoothDevice) {
+    suspend fun connect(device: BluetoothDevice) {
         if (device.bondState == BluetoothDevice.BOND_NONE) {
             device.createBond()
             return
         }
 
-        bluetoothService.connectBluetooth(device)
+        connection.connect(device)
     }
 
-    fun disconnect() {
-        bluetoothService.close()
+    suspend fun disconnect() {
+        connection.disconnect()
     }
 
     fun send(data: String) {

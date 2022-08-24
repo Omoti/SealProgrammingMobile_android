@@ -25,8 +25,11 @@ class Modules {
     }
 
     @Provides
-    fun provideBluetoothController(@ApplicationContext context: Context): BluetoothController {
-        return BluetoothController(context)
+    fun provideBluetoothController(
+        @ApplicationContext context: Context,
+        connection: BluetoothConnection,
+    ): BluetoothController {
+        return BluetoothController(context, connection)
     }
 
     @Provides

@@ -207,8 +207,7 @@ fun MainScreenPreview() {
             MainViewModel(
                 CameraController(context),
                 SealDetector(context),
-                BluetoothController(context),
-                BluetoothConnection(),
+                BluetoothController(context, BluetoothConnection()),
             )
         )
     }
