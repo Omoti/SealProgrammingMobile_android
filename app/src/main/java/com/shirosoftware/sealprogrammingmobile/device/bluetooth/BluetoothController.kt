@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.util.Log
 import com.shirosoftware.sealprogrammingmobile.device.SerialCommand
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -21,8 +20,6 @@ class BluetoothController(
     private val bluetoothAdapter: BluetoothAdapter =
         context.getSystemService(BluetoothManager::class.java).adapter
     private val _devices: MutableList<BluetoothDevice> = mutableListOf()
-
-    private lateinit var bluetoothService: BluetoothService
 
     val connectionState = connection.state
 
@@ -103,26 +100,6 @@ class BluetoothController(
                 }
             }
         }
-    }
-
-    fun start() {
-        bluetoothService = BluetoothService()
-        bluetoothService.registerCallback(object : BluetoothService.IServiceCallback {
-            override fun updateBluetoothStatus(
-                status: BluetoothService.BLUETOOTH_STATUS?,
-                device: BluetoothDevice?
-            ) {
-                Log.d("BluetoothController", "updateBluetoothStatus")
-            }
-
-            override fun onSendBluetoothCommand(command: String?) {
-                Log.d("BluetoothController", "onSendBluetoothCommand")
-            }
-
-            override fun onReceiveBluetoothCommand(command: String?) {
-                Log.d("BluetoothController", "onReceiveBluetoothCommand")
-            }
-        })
     }
 
     suspend fun connect(device: BluetoothDevice) {

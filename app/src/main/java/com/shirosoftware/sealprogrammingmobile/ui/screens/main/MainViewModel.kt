@@ -51,10 +51,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun initDeviceController() {
-        bluetoothController.start()
-    }
-
     fun startSearchDevices() {
         viewModelScope.launch {
             bluetoothController.devices.collect {
