@@ -138,25 +138,25 @@ class BluetoothController(
         connection.disconnect()
     }
 
-    fun send(data: String) {
+    suspend fun write(command: String) {
         // 転送中LED点灯
-        bluetoothService.sendCommandToBluetoothDevice(SerialCommand.ledRed100)
+        connection.write(SerialCommand.ledRed100)
 
         // クリア
-        bluetoothService.sendCommandToBluetoothDevice(SerialCommand.clear)
+        connection.write(SerialCommand.clear)
 
         // 点滅
-        bluetoothService.sendCommandToBluetoothDevice(SerialCommand.blink)
+        connection.write(SerialCommand.blink)
 
         // 1文字ずつ送る
-        data.map {
-            bluetoothService.sendCommandToBluetoothDevice(it.toString())
+        command.map {
+            connection.write(it.toString())
         }
 
         // ゴール
-        bluetoothService.sendCommandToBluetoothDevice(SerialCommand.goal)
+        connection.write(SerialCommand.goal)
 
         // 転送中LED消灯
-        bluetoothService.sendCommandToBluetoothDevice(SerialCommand.ledRed0)
+        connection.write(SerialCommand.ledRed0)
     }
 }

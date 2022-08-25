@@ -89,7 +89,10 @@ class MainViewModel @Inject constructor(
     fun sendCommand() {
         results?.let {
             val commands = DetectionResultsConverter.convertResultsToCommands(it)
-            bluetoothController.send(commands)
+
+            viewModelScope.launch {
+                bluetoothController.write(commands)
+            }
         }
     }
 }
