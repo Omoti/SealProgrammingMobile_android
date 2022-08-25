@@ -180,20 +180,6 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
     }
 }
 
-
-@Composable
-fun PermissionRationaleDialog(onDialogResult: () -> Unit) {
-    AlertDialog(
-        text = { Text("Rationale") },
-        onDismissRequest = {},
-        confirmButton = {
-            TextButton(onClick = onDialogResult) {
-                Text("OK")
-            }
-        }
-    )
-}
-
 @Preview
 @Composable
 fun MainScreenPreview() {
