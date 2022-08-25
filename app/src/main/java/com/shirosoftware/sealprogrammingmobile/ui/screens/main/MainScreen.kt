@@ -24,6 +24,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bluetooth
+import androidx.compose.material.icons.filled.BluetoothConnected
 import androidx.compose.material.icons.filled.ElectricCar
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.rememberModalBottomSheetState
@@ -49,6 +50,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.shirosoftware.sealprogrammingmobile.R
 import com.shirosoftware.sealprogrammingmobile.camera.CameraController
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnection
+import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnectionState
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
@@ -75,6 +77,7 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
     val bluetoothState = viewModel.bluetoothState.collectAsState()
 
     val device = viewModel.selectedDevice.collectAsState()
+    val connectionState = viewModel.connectionState.collectAsState()
 
     val permissionState =
         rememberMultiplePermissionsState(
@@ -162,7 +165,11 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                                 }
                             })
                         CircleButton(
-                            Icons.Default.Bluetooth,
+                            if (connectionState.value == BluetoothConnectionState.Connected) {
+                                Icons.Default.BluetoothConnected
+                            } else {
+                                Icons.Default.Bluetooth
+                            },
                             stringResource(id = R.string.main_button_connect),
                             onClick = {
                                 scope.launch { sheetState.show() }
