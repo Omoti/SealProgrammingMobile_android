@@ -11,18 +11,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Divider
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bluetooth
@@ -41,8 +39,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.shirosoftware.sealprogrammingmobile.R
@@ -139,41 +140,47 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                         )
                     }
                 }
-                Divider()
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = device.value?.name ?: "")
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly,
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
                     modifier = modifier
                         .fillMaxSize()
                         .background(BackgroundDark)
                 ) {
-                    CircleButton(
-                        Icons.Default.PhotoCamera,
-                        stringResource(id = R.string.main_button_camera),
-                        onClick = {
-                            viewModel.dispatchTakePicture()?.let {
-                                launcher.launch(it)
-                                viewModel.startSearchDevices()
-                            }
-                        })
-                    CircleButton(
-                        Icons.Default.Bluetooth,
-                        stringResource(id = R.string.main_button_connect),
-                        onClick = {
-                            scope.launch { sheetState.show() }
-                        })
-                    CircleButton(
-                        Icons.Default.ElectricCar,
-                        stringResource(id = R.string.main_button_send),
-                        onClick = { viewModel.sendCommand() })
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        CircleButton(
+                            Icons.Default.PhotoCamera,
+                            stringResource(id = R.string.main_button_camera),
+                            onClick = {
+                                viewModel.dispatchTakePicture()?.let {
+                                    launcher.launch(it)
+                                    viewModel.startSearchDevices()
+                                }
+                            })
+                        CircleButton(
+                            Icons.Default.Bluetooth,
+                            stringResource(id = R.string.main_button_connect),
+                            onClick = {
+                                scope.launch { sheetState.show() }
+                            })
+                        CircleButton(
+                            Icons.Default.ElectricCar,
+                            stringResource(id = R.string.main_button_send),
+                            onClick = { viewModel.sendCommand() })
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = device.value?.name ?: "",
+                        textAlign = TextAlign.Center,
+                        style = TextStyle(fontSize = 12.sp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(BackgroundDark),
+                    )
                 }
             }
         }
