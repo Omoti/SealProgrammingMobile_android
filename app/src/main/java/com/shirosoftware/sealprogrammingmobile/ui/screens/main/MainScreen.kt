@@ -181,7 +181,15 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = device.value?.name ?: "",
+                        text = "${device.value?.name ?: ""} : ${
+                            when (connectionState.value) {
+                                BluetoothConnectionState.Connected -> "接続済"
+                                BluetoothConnectionState.Connecting -> "接続中..."
+                                BluetoothConnectionState.Disconnected -> "未接続"
+                                is BluetoothConnectionState.Error -> "エラー"
+                                BluetoothConnectionState.Sending -> "送信中"
+                            }
+                        }",
                         textAlign = TextAlign.Center,
                         style = TextStyle(fontSize = 12.sp),
                         modifier = Modifier
