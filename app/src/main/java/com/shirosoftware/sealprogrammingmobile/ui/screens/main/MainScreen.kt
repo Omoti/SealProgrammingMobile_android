@@ -188,7 +188,7 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                             enabled = bitmap.value != null && (connectionState.value == BluetoothConnectionState.Connected)
                         )
                     }
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = device.value?.name?.let {
                             "$it : ${
