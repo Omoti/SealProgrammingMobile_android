@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
@@ -56,6 +57,8 @@ import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
 import com.shirosoftware.sealprogrammingmobile.ui.theme.BackgroundDark
 import com.shirosoftware.sealprogrammingmobile.ui.theme.SealProgrammingMobileTheme
+import com.shirosoftware.sealprogrammingmobile.ui.theme.Secondary
+import com.shirosoftware.sealprogrammingmobile.ui.theme.SecondaryDisable
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalPermissionsApi::class)
@@ -177,7 +180,13 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                         CircleButton(
                             Icons.Default.ElectricCar,
                             stringResource(id = R.string.main_button_send),
-                            onClick = { viewModel.sendCommand() })
+                            onClick = { viewModel.sendCommand() },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Secondary,
+                                disabledBackgroundColor = SecondaryDisable,
+                            ),
+                            enabled = bitmap.value != null && (connectionState.value == BluetoothConnectionState.Connected)
+                        )
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
