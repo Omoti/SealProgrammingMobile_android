@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SealProgrammingMobile</string>
+    <string name="app_name">シールプログラミング</string>
 
     <string name="main_button_camera">とる</string>
     <string name="main_button_connect">つなぐ</string>
