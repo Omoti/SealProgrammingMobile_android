@@ -103,11 +103,6 @@ class BluetoothController(
     }
 
     suspend fun connect(device: BluetoothDevice) {
-        if (device.bondState == BluetoothDevice.BOND_NONE) {
-            device.createBond()
-            return
-        }
-
         connection.connect(device)
     }
 
