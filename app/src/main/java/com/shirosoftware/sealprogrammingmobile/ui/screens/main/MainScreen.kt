@@ -23,13 +23,15 @@ import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.BluetoothConnected
 import androidx.compose.material.icons.filled.ElectricCar
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -57,12 +59,17 @@ import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothControl
 import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
 import com.shirosoftware.sealprogrammingmobile.ui.theme.BackgroundDark
+import com.shirosoftware.sealprogrammingmobile.ui.theme.Primary
 import com.shirosoftware.sealprogrammingmobile.ui.theme.SealProgrammingMobileTheme
 import com.shirosoftware.sealprogrammingmobile.ui.theme.Secondary
 import com.shirosoftware.sealprogrammingmobile.ui.theme.SecondaryDisable
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalPermissionsApi::class)
+@OptIn(
+    ExperimentalMaterialApi::class,
+    ExperimentalPermissionsApi::class,
+    ExperimentalMaterial3Api::class,
+)
 @Composable
 fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
     val bitmap = viewModel.bitmap.collectAsState()
@@ -129,7 +136,15 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
         }
     ) {
         Scaffold(topBar = {
-            TopAppBar(title = { Text(text = stringResource(id = R.string.app_name)) })
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.app_name),
+                        color = Color.White,
+                    )
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Primary),
+            )
         }) {
             Column(
                 modifier = modifier
