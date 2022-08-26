@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -119,6 +120,7 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
+        sheetShape = RoundedCornerShape(topEnd = 16.dp, topStart = 16.dp),
         sheetContent = {
             DeviceList(state = bluetoothState.value) { device ->
                 scope.launch { sheetState.hide() }
