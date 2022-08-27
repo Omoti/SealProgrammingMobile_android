@@ -37,8 +37,8 @@ class MainViewModel @Inject constructor(
 
     val connectionState = bluetoothController.connectionState
 
-    private val _writing = MutableStateFlow(false)
-    val writing: StateFlow<Boolean> = _writing
+    private val _writing = MutableStateFlow<WriteState>(WriteState.Ready)
+    val writing: StateFlow<WriteState> = _writing
 
     fun dispatchTakePicture(): Intent? =
         cameraController.dispatchTakePictureIntent()
@@ -91,14 +91,14 @@ class MainViewModel @Inject constructor(
             val commands = DetectionResultsConverter.convertResultsToCommands(it)
 
             viewModelScope.launch {
-                _writing.emit(true)
+                _writing.emit(WriteState.Writing)
 
                 bluetoothController.write(commands)
 
                 // 演出のためのdelay
                 delay(500)
 
-                _writing.emit(false)
+                _writing.emit(WriteState.Completed)
             }
         }
     }

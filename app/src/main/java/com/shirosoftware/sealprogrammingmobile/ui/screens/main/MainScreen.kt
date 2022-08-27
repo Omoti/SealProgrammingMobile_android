@@ -73,6 +73,7 @@ import kotlinx.coroutines.launch
 )
 @Composable
 fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
     val bitmap = viewModel.bitmap.collectAsState()
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
@@ -211,14 +212,14 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                             ),
                             enabled = (bitmap.value != null
                                     && connectionState.value == BluetoothConnectionState.Connected)
-                                    && !writing.value
+                                    && writing.value != WriteState.Writing
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = device.value?.name?.let {
                             "$it : ${
-                                if (writing.value) "送信中..."
+                                if (writing.value == WriteState.Writing) "送信中..."
                                 else
                                     when (connectionState.value) {
                                         BluetoothConnectionState.Connected -> "接続済"
