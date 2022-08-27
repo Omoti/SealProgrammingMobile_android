@@ -78,7 +78,7 @@ class SealDetector @Inject constructor(private val context: Context) {
             pen.color = Color.YELLOW
             pen.strokeWidth = 2F
 
-            val text = "${it.index}.${seal.text} ${it.value.score.times(100).toInt()}%"
+            val text = "${it.index + 1}.${seal.text} ${it.value.score.times(100).toInt()}%"
             pen.textSize = MAX_FONT_SIZE
             pen.getTextBounds(text, 0, text.length, tagSize)
             val fontSize: Float = pen.textSize * box.width() / tagSize.width()
