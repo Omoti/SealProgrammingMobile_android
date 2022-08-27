@@ -6,6 +6,7 @@ import android.util.Log
 import java.io.IOException
 import java.util.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
@@ -57,13 +58,16 @@ class BluetoothConnection {
     suspend fun write(command: String) {
         socket ?: return
 
-        _state.emit(BluetoothConnectionState.Sending)
+        _state.emit(BluetoothConnectionState.Writing)
 
         withContext(Dispatchers.IO) {
             val outputStream = socket?.outputStream
             outputStream?.write(command.toByteArray())
 
-            _state.emit(BluetoothConnectionState.Connected)
+            // 演出のためのdelay
+            delay(500)
+
+            _state.emit(BluetoothConnectionState.WriteCompleted)
         }
     }
 

@@ -4,6 +4,7 @@ sealed class BluetoothConnectionState {
     object Connecting : BluetoothConnectionState()
     object Connected : BluetoothConnectionState()
     object Disconnected : BluetoothConnectionState()
-    object Sending : BluetoothConnectionState()
+    object Writing : BluetoothConnectionState()
+    object WriteCompleted : BluetoothConnectionState()
     class Error(throwable: Throwable) : BluetoothConnectionState()
 }

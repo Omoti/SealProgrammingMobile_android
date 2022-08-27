@@ -3,6 +3,7 @@ package com.shirosoftware.sealprogrammingmobile.ui.screens.main
 import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -125,6 +126,10 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
         }
     }
 
+    LaunchedEffect(connectionState.value) {
+        Log.d("MainScreen", connectionState.value.toString())
+    }
+
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetShape = RoundedCornerShape(topEnd = 16.dp, topStart = 16.dp),
@@ -185,7 +190,10 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                                 }
                             })
                         CircleButton(
-                            if (connectionState.value == BluetoothConnectionState.Connected) {
+                            if (connectionState.value == BluetoothConnectionState.Connected
+                                || connectionState.value == BluetoothConnectionState.Writing
+                                || connectionState.value == BluetoothConnectionState.WriteCompleted
+                            ) {
                                 Icons.Default.BluetoothConnected
                             } else {
                                 Icons.Default.Bluetooth
@@ -193,7 +201,8 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                             stringResource(id = R.string.main_button_connect),
                             onClick = {
                                 scope.launch { sheetState.show() }
-                            })
+                            },
+                        )
                         CircleButton(
                             Icons.Default.ElectricCar,
                             stringResource(id = R.string.main_button_send),
@@ -202,7 +211,9 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                                 backgroundColor = Secondary,
                                 disabledBackgroundColor = SecondaryDisable,
                             ),
-                            enabled = bitmap.value != null && (connectionState.value == BluetoothConnectionState.Connected)
+                            enabled = bitmap.value != null
+                                    && (connectionState.value == BluetoothConnectionState.Connected
+                                    || connectionState.value == BluetoothConnectionState.WriteCompleted)
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
@@ -214,7 +225,8 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                                     BluetoothConnectionState.Connecting -> "接続中..."
                                     BluetoothConnectionState.Disconnected -> "未接続"
                                     is BluetoothConnectionState.Error -> "エラー"
-                                    BluetoothConnectionState.Sending -> "送信中"
+                                    BluetoothConnectionState.Writing -> "送信中"
+                                    BluetoothConnectionState.WriteCompleted -> "接続済"
                                 }
                             }"
                         } ?: "未選択",
