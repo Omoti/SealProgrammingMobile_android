@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
@@ -29,13 +30,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.shirosoftware.sealprogrammingmobile.R
+import com.shirosoftware.sealprogrammingmobile.ui.theme.Primary
 import com.shirosoftware.sealprogrammingmobile.ui.theme.SealProgrammingMobileTheme
 
 @Composable
 fun DeviceList(
     state: BluetoothState,
-    modifier: Modifier = Modifier,
+    connectedDevice: BluetoothDevice?,
     onClickItem: (device: BluetoothDevice) -> Unit,
+    onClickDisconnectDevice: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         verticalArrangement = Arrangement.Top,
@@ -51,6 +55,17 @@ fun DeviceList(
                 .clip(CircleShape)
         )
         Spacer(modifier = Modifier.height(12.dp))
+
+        // 接続痛のデバイス
+        connectedDevice?.let {
+            ConnectedDeviceItem(
+                name = connectedDevice.name,
+                onDisconnectClick = onClickDisconnectDevice,
+            )
+            Divider()
+            Spacer(modifier = Modifier.height(12.dp))
+        }
+
         when (state) {
             is BluetoothState.Searching -> {
                 Column(
@@ -107,11 +122,33 @@ fun DeviceItem(name: String, isBonded: Boolean, onClick: () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ConnectedDeviceItem(name: String, onDisconnectClick: () -> Unit) {
+    ListItem(modifier = Modifier
+        .padding(8.dp),
+        icon = {
+            Icon(
+                Icons.Default.Bluetooth,
+                contentDescription = null,
+                tint = Primary,
+            )
+        },
+        trailing = {
+            Button(onClick = onDisconnectClick) {
+                Text(text = "切断")
+            }
+        }
+    ) {
+        Text(text = name, color = Primary)
+    }
+}
+
 @Preview
 @Composable
 fun DeviceListPreview_Searching() {
     SealProgrammingMobileTheme {
-        DeviceList(state = BluetoothState.Searching) {}
+        DeviceList(state = BluetoothState.Searching, null, {}, {})
     }
 }
 
@@ -122,8 +159,11 @@ fun DeviceListPreview_Find() {
         DeviceList(
             state = BluetoothState.Found(
                 listOf()
-            )
-        ) {}
+            ),
+            null,
+            {},
+            {},
+        )
     }
 }
 
@@ -131,7 +171,7 @@ fun DeviceListPreview_Find() {
 @Composable
 fun DeviceListPreview_Error() {
     SealProgrammingMobileTheme {
-        DeviceList(state = BluetoothState.Error(Throwable("エラー"))) {}
+        DeviceList(state = BluetoothState.Error(Throwable("エラー")), null, {}, {})
     }
 }
 

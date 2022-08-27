@@ -136,10 +136,22 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
         sheetState = sheetState,
         sheetShape = RoundedCornerShape(topEnd = 16.dp, topStart = 16.dp),
         sheetContent = {
-            DeviceList(state = bluetoothState.value) { device ->
-                scope.launch { sheetState.hide() }
-                viewModel.connect(device)
-            }
+            DeviceList(
+                state = bluetoothState.value,
+                connectedDevice = device.value,
+                onClickItem = { device ->
+                    scope.launch {
+                        sheetState.hide()
+                        viewModel.connect(device)
+                    }
+                },
+                onClickDisconnectDevice = {
+                    scope.launch {
+                        sheetState.hide()
+                        viewModel.disconnect()
+                    }
+                }
+            )
         }
     ) {
         Scaffold(topBar = {
