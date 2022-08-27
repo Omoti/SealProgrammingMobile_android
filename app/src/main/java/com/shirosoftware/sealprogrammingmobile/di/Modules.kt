@@ -2,9 +2,11 @@ package com.shirosoftware.sealprogrammingmobile.di
 
 import android.content.Context
 import com.shirosoftware.sealprogrammingmobile.camera.CameraController
+import com.shirosoftware.sealprogrammingmobile.data.SettingsDataStore
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnection
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
+import com.shirosoftware.sealprogrammingmobile.repository.SettingsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,5 +37,17 @@ class Modules {
     @Provides
     fun provideBluetoothConnection(): BluetoothConnection {
         return BluetoothConnection()
+    }
+
+    @Provides
+    fun provideSettingsDataStore(
+        @ApplicationContext context: Context,
+    ): SettingsDataStore {
+        return SettingsDataStore(context)
+    }
+
+    @Provides
+    fun provideSettingsRepository(dataStore: SettingsDataStore): SettingsRepository {
+        return SettingsRepository(dataStore)
     }
 }

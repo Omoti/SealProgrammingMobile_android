@@ -21,19 +21,19 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.shirosoftware.sealprogrammingmobile.R
+import com.shirosoftware.sealprogrammingmobile.data.SettingsDataStore
+import com.shirosoftware.sealprogrammingmobile.repository.SettingsRepository
 import com.shirosoftware.sealprogrammingmobile.ui.theme.Primary
 import com.shirosoftware.sealprogrammingmobile.ui.theme.PrimaryVariant
 import com.shirosoftware.sealprogrammingmobile.ui.theme.SealProgrammingMobileTheme
@@ -45,7 +45,7 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
 ) {
-    var sliderPosition by remember { mutableStateOf(5f) }
+    val sliderPosition = viewModel.threshold.collectAsState(initial = 5f)
 
     Scaffold(
         modifier = modifier,
@@ -92,7 +92,7 @@ fun SettingsScreen(
                 )
                 Spacer(Modifier.height(12.dp))
                 Text(
-                    text = "${sliderPosition.toInt() * 10}%",
+                    text = "${sliderPosition.value.toInt() * 10}%",
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
                 )
@@ -102,11 +102,11 @@ fun SettingsScreen(
                     Text(text = "0%")
                     Slider(
                         modifier = Modifier.weight(1.0f),
-                        value = sliderPosition,
+                        value = sliderPosition.value,
                         steps = 10,
                         valueRange = 0f..10f,
                         onValueChange = {
-                            sliderPosition = it
+                            viewModel.updateThreshold(it)
                         },
                         colors = SliderDefaults.colors(
                             thumbColor = Primary,
@@ -124,6 +124,14 @@ fun SettingsScreen(
 @Composable
 fun SettingsScreenPreview() {
     SealProgrammingMobileTheme {
-        SettingsScreen(viewModel = SettingsViewModel())
+        SettingsScreen(
+            viewModel = SettingsViewModel(
+                SettingsRepository(
+                    SettingsDataStore(
+                        LocalContext.current
+                    )
+                )
+            )
+        )
     }
 }
