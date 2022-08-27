@@ -30,7 +30,10 @@ class SealDetector @Inject constructor(private val context: Context) {
 
         val results = detector.detect(image)
 
-        val resultToDisplay = results.map {
+        val resultToDisplay = results.filter {
+            // 大きすぎるものは除外
+            it.boundingBox.right - it.boundingBox.left < bitmap.width / 2
+        }.map {
             // Get the top-1 category and craft the display text
             val category = it.categories.first()
             val label = category.label
