@@ -26,9 +26,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.shirosoftware.sealprogrammingmobile.R
 import com.shirosoftware.sealprogrammingmobile.ui.theme.Primary
 import com.shirosoftware.sealprogrammingmobile.ui.theme.SealProgrammingMobileTheme
@@ -60,6 +62,7 @@ fun DeviceList(
         connectedDevice?.let {
             ConnectedDeviceItem(
                 name = connectedDevice.name,
+                mac = connectedDevice.address,
                 onDisconnectClick = onClickDisconnectDevice,
             )
             Divider()
@@ -85,6 +88,7 @@ fun DeviceList(
                         val device = state.devices[index]
                         DeviceItem(
                             device.name ?: device.address,
+                            device.address,
                             device.bondState == BluetoothDevice.BOND_BONDED,
                         ) {
                             onClickItem(device)
@@ -108,23 +112,26 @@ fun DeviceList(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DeviceItem(name: String, isBonded: Boolean, onClick: () -> Unit) {
-    ListItem(modifier = Modifier
-        .clickable { onClick.invoke() }
-        .padding(8.dp),
+fun DeviceItem(name: String, mac: String, isBonded: Boolean, onClick: () -> Unit) {
+    ListItem(
+        modifier = Modifier
+            .clickable { onClick.invoke() }
+            .padding(8.dp),
         icon = {
             if (isBonded) Icon(
                 Icons.Default.Bluetooth,
                 contentDescription = null
             )
-        }) {
+        },
+        secondaryText = { Text(text = mac, color = Color.Gray, fontSize = 12.sp) },
+    ) {
         Text(text = name)
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ConnectedDeviceItem(name: String, onDisconnectClick: () -> Unit) {
+fun ConnectedDeviceItem(name: String, mac: String, onDisconnectClick: () -> Unit) {
     ListItem(modifier = Modifier
         .padding(8.dp),
         icon = {
@@ -134,6 +141,7 @@ fun ConnectedDeviceItem(name: String, onDisconnectClick: () -> Unit) {
                 tint = Primary,
             )
         },
+        secondaryText = { Text(text = mac, color = Color.Gray, fontSize = 12.sp) },
         trailing = {
             Button(onClick = onDisconnectClick) {
                 Text(text = "切断")
@@ -179,6 +187,6 @@ fun DeviceListPreview_Error() {
 @Composable
 fun DeviceItemPreview() {
     SealProgrammingMobileTheme {
-        DeviceItem(name = "device", false) {}
+        DeviceItem(name = "device", "mac address", false) {}
     }
 }
