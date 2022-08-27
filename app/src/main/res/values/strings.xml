@@ -7,4 +7,6 @@
 
     <string name="bluetooth_searching">デバイスをさがしています…</string>
     <string name="bluetooth_error">エラー</string>
+
+    <string name="bluetooth_write_completed">コマンドをおくりました</string>
 </resources>

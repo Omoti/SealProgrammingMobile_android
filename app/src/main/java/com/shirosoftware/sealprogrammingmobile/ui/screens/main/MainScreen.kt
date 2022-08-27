@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -73,7 +74,12 @@ import kotlinx.coroutines.launch
 )
 @Composable
 fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
-    val context = LocalContext.current
+    val toast = Toast.makeText(
+        LocalContext.current,
+        stringResource(id = R.string.bluetooth_write_completed),
+        Toast.LENGTH_SHORT
+    )
+
     val bitmap = viewModel.bitmap.collectAsState()
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
@@ -130,6 +136,13 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
 
     LaunchedEffect(connectionState.value) {
         Log.d("MainScreen", connectionState.value.toString())
+    }
+
+    // 送信完了
+    LaunchedEffect(writing.value) {
+        if (writing.value == WriteState.Completed) {
+            toast.show()
+        }
     }
 
     ModalBottomSheetLayout(
