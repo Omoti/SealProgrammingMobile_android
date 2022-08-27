@@ -1,5 +1,14 @@
 package com.shirosoftware.sealprogrammingmobile.ui.screens.settings
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -7,14 +16,27 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.shirosoftware.sealprogrammingmobile.R
 import com.shirosoftware.sealprogrammingmobile.ui.theme.Primary
+import com.shirosoftware.sealprogrammingmobile.ui.theme.PrimaryVariant
+import com.shirosoftware.sealprogrammingmobile.ui.theme.SealProgrammingMobileTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,12 +45,15 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
 ) {
+    var sliderPosition by remember { mutableStateOf(5f) }
+
     Scaffold(
+        modifier = modifier,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    androidx.compose.material.Text(
-                        text = stringResource(id = R.string.app_name),
+                    Text(
+                        text = stringResource(id = R.string.settings_title),
                         color = Color.White,
                     )
                 },
@@ -44,7 +69,61 @@ fun SettingsScreen(
                 }
             )
         }
-    ) {
-        Text(text = "Settings")
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .background(Color.White)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.settings_threshold_title),
+                    fontSize = 18.sp
+                )
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    text = stringResource(id = R.string.settings_threshold_content),
+                    fontSize = 13.sp
+                )
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    text = "${sliderPosition.toInt() * 10}%",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(text = "0%")
+                    Slider(
+                        modifier = Modifier.weight(1.0f),
+                        value = sliderPosition,
+                        steps = 10,
+                        valueRange = 0f..10f,
+                        onValueChange = {
+                            sliderPosition = it
+                        },
+                        colors = SliderDefaults.colors(
+                            thumbColor = Primary,
+                            activeTrackColor = PrimaryVariant,
+                        )
+                    )
+                    Text(text = "100%")
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun SettingsScreenPreview() {
+    SealProgrammingMobileTheme {
+        SettingsScreen(viewModel = SettingsViewModel())
     }
 }

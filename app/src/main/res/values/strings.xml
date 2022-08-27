@@ -9,4 +9,11 @@
     <string name="bluetooth_error">エラー</string>
 
     <string name="bluetooth_write_completed">コマンドをおくりました</string>
+
+    <!-- 設定画面 -->
+    <string name="settings_title">設定</string>
+    <string name="settings_threshold_title">シール認識のしきい値</string>
+    <string name="settings_threshold_content">
+        写真からシールを認識する際のしきい値を設定します。\nシールが認識されにくいときは、しきい値を下げてください。\nシール以外のものを誤って認識するときは、しきい値を上げてください。
+    </string>
 </resources>
