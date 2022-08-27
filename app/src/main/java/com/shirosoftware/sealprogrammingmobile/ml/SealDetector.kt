@@ -43,7 +43,7 @@ class SealDetector @Inject constructor(private val context: Context) {
         // 左下から列ごとに並び替え
         // 左右位置に重みをつける
         return resultToDisplay.sortedWith(compareBy {
-            it.boundingBox.left * 5 + (bitmap.height - it.boundingBox.top)
+            it.boundingBox.left * 10 + (bitmap.height - it.boundingBox.top)
         })
     }
 
