@@ -90,6 +90,7 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
 
     val device = viewModel.selectedDevice.collectAsState()
     val connectionState = viewModel.connectionState.collectAsState()
+    val writing = viewModel.writing.collectAsState()
 
     val permissionState =
         rememberMultiplePermissionsState(
@@ -208,21 +209,24 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                                 backgroundColor = Secondary,
                                 disabledBackgroundColor = SecondaryDisable,
                             ),
-                            enabled = bitmap.value != null
-                                    && connectionState.value == BluetoothConnectionState.Connected
+                            enabled = (bitmap.value != null
+                                    && connectionState.value == BluetoothConnectionState.Connected)
+                                    && !writing.value
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = device.value?.name?.let {
                             "$it : ${
-                                when (connectionState.value) {
-                                    BluetoothConnectionState.Connected -> "接続済"
-                                    BluetoothConnectionState.Connecting -> "接続中..."
-                                    BluetoothConnectionState.Disconnected -> "未接続"
-                                    BluetoothConnectionState.Writing -> "送信中..."
-                                    is BluetoothConnectionState.Error -> "エラー"
-                                }
+                                if (writing.value) "送信中..."
+                                else
+                                    when (connectionState.value) {
+                                        BluetoothConnectionState.Connected -> "接続済"
+                                        BluetoothConnectionState.Connecting -> "接続中..."
+                                        BluetoothConnectionState.Disconnected -> "未接続"
+                                        BluetoothConnectionState.Writing -> "送信中..."
+                                        is BluetoothConnectionState.Error -> "エラー"
+                                    }
                             }"
                         } ?: "未選択",
                         textAlign = TextAlign.Center,

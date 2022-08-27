@@ -13,6 +13,7 @@ import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -35,6 +36,9 @@ class MainViewModel @Inject constructor(
     private var results: List<DetectionResult>? = null
 
     val connectionState = bluetoothController.connectionState
+
+    private val _writing = MutableStateFlow(false)
+    val writing: StateFlow<Boolean> = _writing
 
     fun dispatchTakePicture(): Intent? =
         cameraController.dispatchTakePictureIntent()
@@ -87,7 +91,14 @@ class MainViewModel @Inject constructor(
             val commands = DetectionResultsConverter.convertResultsToCommands(it)
 
             viewModelScope.launch {
+                _writing.emit(true)
+
                 bluetoothController.write(commands)
+
+                // 演出のためのdelay
+                delay(500)
+
+                _writing.emit(false)
             }
         }
     }
