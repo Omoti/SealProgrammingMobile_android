@@ -50,7 +50,7 @@ class MainViewModel @Inject constructor(
         _bitmap.value = cameraController.getCapturedImage()
 
         viewModelScope.launch(Dispatchers.IO) {
-            val threshold = settingsRepository.threshold.first() / 100
+            val threshold = settingsRepository.threshold.first()
 
             _bitmap.value?.let { bitmap ->
                 val detectionResults = sealDetector.runObjectDetection(bitmap, threshold)

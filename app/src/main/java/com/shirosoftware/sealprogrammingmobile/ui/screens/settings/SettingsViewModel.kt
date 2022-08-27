@@ -1,21 +1,26 @@
 package com.shirosoftware.sealprogrammingmobile.ui.screens.settings
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shirosoftware.sealprogrammingmobile.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlin.math.floor
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(private val repository: SettingsRepository) :
     ViewModel() {
-    val threshold = repository.threshold.map { it / 10 }
+    val threshold = repository.threshold
 
     fun updateThreshold(value: Float) {
+        Log.d("SettingsViewModel", "update: $value")
+        val ceilValue = ((floor(value.toDouble() * 10 + 0.5)) / 10).toFloat()
+
+        Log.d("SettingsViewModel", "update ceil: $ceilValue")
         viewModelScope.launch {
-            repository.updateThreshold(value * 10)
+            repository.updateThreshold(ceilValue)
         }
     }
 }

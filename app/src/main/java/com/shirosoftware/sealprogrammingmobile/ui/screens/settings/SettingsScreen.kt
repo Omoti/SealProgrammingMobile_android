@@ -45,7 +45,7 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
 ) {
-    val sliderPosition = viewModel.threshold.collectAsState(initial = 5f)
+    val sliderPosition = viewModel.threshold.collectAsState(initial = 0.5f)
 
     Scaffold(
         modifier = modifier,
@@ -92,19 +92,19 @@ fun SettingsScreen(
                 )
                 Spacer(Modifier.height(12.dp))
                 Text(
-                    text = "${sliderPosition.value.toInt() * 10}%",
+                    text = "${(sliderPosition.value * 100).toInt()}%",
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(text = "0%")
+                    Text(text = "0%", modifier = Modifier.weight(1.0f))
                     Slider(
-                        modifier = Modifier.weight(1.0f),
+                        modifier = Modifier.weight(8.0f),
                         value = sliderPosition.value,
-                        steps = 10,
-                        valueRange = 0f..10f,
+                        steps = 9,
+                        valueRange = 0f..1f,
                         onValueChange = {
                             viewModel.updateThreshold(it)
                         },
@@ -113,7 +113,7 @@ fun SettingsScreen(
                             activeTrackColor = PrimaryVariant,
                         )
                     )
-                    Text(text = "100%")
+                    Text(text = "100%", modifier = Modifier.weight(1.0f))
                 }
             }
         }
