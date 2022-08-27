@@ -67,7 +67,7 @@ class BluetoothConnection {
             // 演出のためのdelay
             delay(500)
 
-            _state.emit(BluetoothConnectionState.WriteCompleted)
+            _state.emit(BluetoothConnectionState.Connected)
         }
     }
 

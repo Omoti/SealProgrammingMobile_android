@@ -190,10 +190,7 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                                 }
                             })
                         CircleButton(
-                            if (connectionState.value == BluetoothConnectionState.Connected
-                                || connectionState.value == BluetoothConnectionState.Writing
-                                || connectionState.value == BluetoothConnectionState.WriteCompleted
-                            ) {
+                            if (connectionState.value == BluetoothConnectionState.Connected) {
                                 Icons.Default.BluetoothConnected
                             } else {
                                 Icons.Default.Bluetooth
@@ -212,8 +209,7 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                                 disabledBackgroundColor = SecondaryDisable,
                             ),
                             enabled = bitmap.value != null
-                                    && (connectionState.value == BluetoothConnectionState.Connected
-                                    || connectionState.value == BluetoothConnectionState.WriteCompleted)
+                                    && connectionState.value == BluetoothConnectionState.Connected
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
@@ -224,9 +220,8 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                                     BluetoothConnectionState.Connected -> "接続済"
                                     BluetoothConnectionState.Connecting -> "接続中..."
                                     BluetoothConnectionState.Disconnected -> "未接続"
+                                    BluetoothConnectionState.Writing -> "送信中..."
                                     is BluetoothConnectionState.Error -> "エラー"
-                                    BluetoothConnectionState.Writing -> "送信中"
-                                    BluetoothConnectionState.WriteCompleted -> "接続済"
                                 }
                             }"
                         } ?: "未選択",
