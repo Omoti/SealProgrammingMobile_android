@@ -58,10 +58,12 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.shirosoftware.sealprogrammingmobile.R
 import com.shirosoftware.sealprogrammingmobile.camera.CameraController
+import com.shirosoftware.sealprogrammingmobile.data.SettingsDataStore
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnection
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnectionState
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
+import com.shirosoftware.sealprogrammingmobile.repository.SettingsRepository
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
 import com.shirosoftware.sealprogrammingmobile.ui.theme.BackgroundDark
 import com.shirosoftware.sealprogrammingmobile.ui.theme.Primary
@@ -295,6 +297,7 @@ fun MainScreenPreview() {
                 CameraController(context),
                 SealDetector(context),
                 BluetoothController(context, BluetoothConnection()),
+                SettingsRepository(SettingsDataStore(context))
             )
         )
     }

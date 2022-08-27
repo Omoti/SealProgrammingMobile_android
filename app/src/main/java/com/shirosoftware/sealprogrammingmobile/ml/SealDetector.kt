@@ -16,11 +16,11 @@ class SealDetector @Inject constructor(private val context: Context) {
      * runObjectDetection(bitmap: Bitmap)
      *      TFLite Object Detection function
      */
-    fun runObjectDetection(bitmap: Bitmap): List<DetectionResult> {
+    fun runObjectDetection(bitmap: Bitmap, threshold: Float): List<DetectionResult> {
         val image = TensorImage.fromBitmap(bitmap)
 
         val options = ObjectDetector.ObjectDetectorOptions.builder()
-            .setScoreThreshold(THRESHOLD)
+            .setScoreThreshold(threshold)
             .build()
         val detector = ObjectDetector.createFromFileAndOptions(
             context, // the application context
