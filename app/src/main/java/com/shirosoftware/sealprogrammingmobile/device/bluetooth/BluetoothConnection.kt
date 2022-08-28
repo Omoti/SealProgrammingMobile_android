@@ -3,6 +3,7 @@ package com.shirosoftware.sealprogrammingmobile.device.bluetooth
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.util.Log
+import androidx.annotation.RequiresPermission
 import java.io.IOException
 import java.util.*
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +18,7 @@ class BluetoothConnection {
         MutableStateFlow<BluetoothConnectionState>(BluetoothConnectionState.Disconnected)
     val state: StateFlow<BluetoothConnectionState> = _state
 
+    @RequiresPermission
     @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun connect(device: BluetoothDevice) {
         Log.d(TAG, "Connecting...")
