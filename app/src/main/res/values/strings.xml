@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">シールプログラミング</string>
 
+    <!-- メイン -->
     <string name="main_button_camera">とる</string>
     <string name="main_button_connect">つなぐ</string>
     <string name="main_button_send">おくる</string>
+    <string name="main_welcome_title">シールプログラミングへようこそ</string>
+    <string name="main_welcome_content">１．シールの写真をとる\n２．カードックにつなぐ\n３．コマンドをおくる</string>
 
     <string name="bluetooth_searching">デバイスをさがしています…</string>
     <string name="bluetooth_error">エラー</string>
