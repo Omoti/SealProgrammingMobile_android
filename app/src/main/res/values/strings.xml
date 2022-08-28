@@ -6,12 +6,12 @@
     <string name="main_button_connect">つなぐ</string>
     <string name="main_button_send">おくる</string>
     <string name="main_welcome_title">シールプログラミングへようこそ</string>
-    <string name="main_welcome_content">１．シールの写真をとる\n２．カードックにつなぐ\n３．コマンドをおくる</string>
+    <string name="main_welcome_content">１．カメラでシールをとる\n２．カードックにつなぐ\n３．プログラムをおくる</string>
 
     <string name="bluetooth_searching">デバイスをさがしています…</string>
     <string name="bluetooth_error">エラー</string>
 
-    <string name="bluetooth_write_completed">コマンドをおくりました</string>
+    <string name="bluetooth_write_completed">プログラムをおくりました</string>
 
     <!-- 設定画面 -->
     <string name="settings_title">設定</string>
