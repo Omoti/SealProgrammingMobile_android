@@ -105,7 +105,6 @@ class SealDetector @Inject constructor(private val context: Context) {
 
     companion object {
         private const val MODEL_FILE_NAME = "seals_model.tflite"
-        private const val THRESHOLD = 0.5f
         private const val MAX_FONT_SIZE = 48f
     }
 }

@@ -18,7 +18,6 @@ import java.util.*
 import javax.inject.Inject
 
 class CameraController @Inject constructor(private val context: Context) {
-    private val TAG = this.javaClass.javaClass.simpleName
     private lateinit var currentPhotoPath: String
 
     /**
@@ -62,20 +61,7 @@ class CameraController @Inject constructor(private val context: Context) {
             }
         }
     }
-
-    /**
-     * getSampleImage():
-     *      Get image form drawable and convert to bitmap.
-     */
-    private fun getSampleImage(drawable: Int): Bitmap {
-        return BitmapFactory.decodeResource(
-            context.resources,
-            drawable,
-            BitmapFactory.Options().apply {
-                inMutable = true
-            })
-    }
-
+    
     /**
      * rotateImage():
      *     Decodes and crops the captured image from camera.
@@ -118,7 +104,7 @@ class CameraController @Inject constructor(private val context: Context) {
             val photoFile: File? = try {
                 createImageFile()
             } catch (e: IOException) {
-                Log.e(TAG, e.message.toString())
+                Log.e("CameraController", e.message.toString())
                 null
             }
             // Continue only if the File was successfully created

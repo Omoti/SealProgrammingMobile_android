@@ -37,7 +37,7 @@ class BluetoothConnection {
         }
     }
 
-
+    @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun disconnect() {
         withContext(Dispatchers.IO) {
             try {
@@ -62,7 +62,7 @@ class BluetoothConnection {
         withContext(Dispatchers.IO) {
             val outputStream = socket?.outputStream
             outputStream?.write(command.toByteArray())
-            
+
             _state.emit(BluetoothConnectionState.Connected)
         }
     }
