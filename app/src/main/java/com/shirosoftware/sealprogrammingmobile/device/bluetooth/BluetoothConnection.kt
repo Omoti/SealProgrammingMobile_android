@@ -22,6 +22,12 @@ class BluetoothConnection {
     @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun connect(device: BluetoothDevice) {
         Log.d(TAG, "Connecting...")
+
+        if (device.bondState == BluetoothDevice.BOND_NONE) {
+            Log.d(TAG, "Create bond")
+            device.createBond()
+        }
+
         _state.emit(BluetoothConnectionState.Connecting)
 
         withContext(Dispatchers.IO) {
