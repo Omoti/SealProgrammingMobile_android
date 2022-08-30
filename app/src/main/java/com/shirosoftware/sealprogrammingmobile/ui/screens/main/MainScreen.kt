@@ -123,7 +123,14 @@ fun MainScreen(
                 listOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
                 )
-            }
+            } + if (Build.VERSION.SDK_INT <= 28) {
+                listOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            } else listOf(
+                Manifest.permission.CAMERA
+            ),
         )
     if (!permissionState.allPermissionsGranted) {
         SideEffect {
