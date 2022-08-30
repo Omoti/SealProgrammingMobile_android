@@ -6,6 +6,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
+import com.shirosoftware.sealprogrammingmobile.ui.screens.camera.CameraScreen
 import com.shirosoftware.sealprogrammingmobile.ui.screens.main.MainScreen
 import com.shirosoftware.sealprogrammingmobile.ui.screens.settings.SettingsScreen
 
@@ -17,12 +18,22 @@ fun AppNavHost(navController: NavHostController) {
         startDestination = "main",
     ) {
         composable("main") {
-            MainScreen(hiltViewModel(), onClickSettings = {
-                navController.navigate("settings")
-            })
+            MainScreen(
+                hiltViewModel(),
+                onClickCamera = {
+                    navController.navigate("camera")
+                },
+                onClickSettings = {
+                    navController.navigate("settings")
+                })
         }
         composable("settings") {
             SettingsScreen(hiltViewModel(), onBack = {
+                navController.popBackStack()
+            })
+        }
+        composable("camera") {
+            CameraScreen(hiltViewModel(), onBack = {
                 navController.popBackStack()
             })
         }

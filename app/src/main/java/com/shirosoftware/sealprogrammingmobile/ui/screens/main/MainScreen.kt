@@ -85,6 +85,7 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     viewModel: MainViewModel,
     modifier: Modifier = Modifier,
+    onClickCamera: () -> Unit = {},
     onClickSettings: () -> Unit = {},
 ) {
     val toast = Toast.makeText(
@@ -269,8 +270,7 @@ fun MainScreen(
                             stringResource(id = R.string.main_button_camera),
                             onClick = {
                                 viewModel.dispatchTakePicture()?.let {
-                                    launcher.launch(it)
-                                    viewModel.startSearchDevices()
+                                    onClickCamera.invoke()
                                 }
                             })
                         CircleButton(
@@ -282,6 +282,7 @@ fun MainScreen(
                             stringResource(id = R.string.main_button_connect),
                             onClick = {
                                 scope.launch { sheetState.show() }
+                                viewModel.startSearchDevices()
                             },
                         )
                         CircleButton(
