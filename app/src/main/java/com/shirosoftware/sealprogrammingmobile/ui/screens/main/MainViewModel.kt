@@ -107,4 +107,10 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+
+    fun resetWriteState() {
+        viewModelScope.launch {
+            _writing.emit(WriteState.Ready)
+        }
+    }
 }

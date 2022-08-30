@@ -155,6 +155,7 @@ fun MainScreen(
     LaunchedEffect(writing.value) {
         if (writing.value == WriteState.Completed) {
             toast.show()
+            viewModel.resetWriteState()
         }
     }
 
