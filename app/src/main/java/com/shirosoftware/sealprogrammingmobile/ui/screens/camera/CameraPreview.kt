@@ -6,7 +6,6 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
@@ -20,7 +19,6 @@ fun CameraPreview(
 ) {
     AndroidView(
         modifier = modifier
-            .fillMaxSize()
             .aspectRatio(3.0f / 4.0f),
         factory = { context ->
 
