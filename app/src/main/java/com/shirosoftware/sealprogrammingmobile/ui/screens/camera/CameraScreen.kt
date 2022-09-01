@@ -34,6 +34,9 @@ fun CameraScreen(
             ShutterButton(
                 modifier = Modifier.size(88.dp),
             )
+            SwitchCameraButton(
+                modifier = Modifier.size(64.dp),
+            )
         }
     }
 }
