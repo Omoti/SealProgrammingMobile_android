@@ -17,9 +17,10 @@ fun AppNavHost(navController: NavHostController) {
         navController = navController,
         startDestination = "main",
     ) {
-        composable("main") {
+        composable("main") { backStackEntry ->
             MainScreen(
                 hiltViewModel(),
+                imagePath = backStackEntry.arguments?.getString("path"),
                 onClickCamera = {
                     navController.navigate("camera")
                 },
@@ -28,14 +29,24 @@ fun AppNavHost(navController: NavHostController) {
                 })
         }
         composable("settings") {
-            SettingsScreen(hiltViewModel(), onBack = {
-                navController.popBackStack()
-            })
+            SettingsScreen(
+                hiltViewModel(),
+                onBack = {
+                    navController.popBackStack()
+                })
         }
         composable("camera") {
-            CameraScreen(hiltViewModel(), onBack = {
-                navController.popBackStack()
-            })
+            CameraScreen(
+                hiltViewModel(),
+                onCaptured = { path ->
+                    navController.previousBackStackEntry?.savedStateHandle?.let {
+                        it["path"] = path
+                    }
+                    navController.popBackStack()
+                },
+                onBack = {
+                    navController.popBackStack()
+                })
         }
     }
 }

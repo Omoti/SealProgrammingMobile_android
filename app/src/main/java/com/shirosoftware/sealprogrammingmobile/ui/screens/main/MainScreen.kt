@@ -1,12 +1,9 @@
 package com.shirosoftware.sealprogrammingmobile.ui.screens.main
 
 import android.Manifest
-import android.app.Activity.RESULT_OK
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -61,12 +58,13 @@ import androidx.compose.ui.unit.sp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.shirosoftware.sealprogrammingmobile.R
-import com.shirosoftware.sealprogrammingmobile.camera.CameraController
+import com.shirosoftware.sealprogrammingmobile.camera.ImageDataSource
 import com.shirosoftware.sealprogrammingmobile.data.SettingsDataStore
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnection
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnectionState
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
+import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
 import com.shirosoftware.sealprogrammingmobile.repository.SettingsRepository
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
 import com.shirosoftware.sealprogrammingmobile.ui.theme.BackgroundDark
@@ -85,6 +83,7 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     viewModel: MainViewModel,
     modifier: Modifier = Modifier,
+    imagePath: String? = null,
     onClickCamera: () -> Unit = {},
     onClickSettings: () -> Unit = {},
 ) {
@@ -95,13 +94,13 @@ fun MainScreen(
     )
 
     val bitmap = viewModel.bitmap.collectAsState()
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult(),
-        onResult = { result ->
-            if (result.resultCode != RESULT_OK) return@rememberLauncherForActivityResult
-            viewModel.loadCapturedImage()
-        }
-    )
+//    val launcher = rememberLauncherForActivityResult(
+//        contract = ActivityResultContracts.StartActivityForResult(),
+//        onResult = { result ->
+//            if (result.resultCode != RESULT_OK) return@rememberLauncherForActivityResult
+//            viewModel.loadCapturedImage()
+//        }
+//    )
 
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
@@ -165,6 +164,11 @@ fun MainScreen(
             toast.show()
             viewModel.resetWriteState()
         }
+    }
+
+    LaunchedEffect(imagePath) {
+        Log.d("MainScreen", "imagePath: $imagePath")
+        imagePath?.let { viewModel.loadCapturedImage(it) }
     }
 
     ModalBottomSheetLayout(
@@ -269,9 +273,7 @@ fun MainScreen(
                             Icons.Default.PhotoCamera,
                             stringResource(id = R.string.main_button_camera),
                             onClick = {
-                                viewModel.dispatchTakePicture()?.let {
-                                    onClickCamera.invoke()
-                                }
+                                onClickCamera.invoke()
                             })
                         CircleButton(
                             if (connectionState.value == BluetoothConnectionState.Connected) {
@@ -332,9 +334,9 @@ fun MainScreenPreview() {
     SealProgrammingMobileTheme {
         MainScreen(
             MainViewModel(
-                CameraController(context),
                 SealDetector(context),
                 BluetoothController(context, BluetoothConnection()),
+                ImageRepository(ImageDataSource((context))),
                 SettingsRepository(SettingsDataStore(context))
             )
         )

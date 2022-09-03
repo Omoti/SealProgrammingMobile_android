@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
@@ -29,14 +28,15 @@ import androidx.core.content.ContextCompat
 fun CameraScreen(
     viewModel: CameraViewModel,
     modifier: Modifier = Modifier,
+    onCaptured: (path: String) -> Unit = {},
     onBack: () -> Unit = {},
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
-    val configuration = LocalConfiguration.current
+    // val configuration = LocalConfiguration.current
 
     val imageCapture = ImageCapture.Builder()
-        .setTargetRotation(configuration.orientation)
+        //.setTargetRotation(configuration.orientation) // 必要になったら有効化
         .build()
 
     Column(modifier = modifier.background(Color.Black)) {
@@ -114,6 +114,7 @@ fun CameraScreen(
                         object : ImageCapture.OnImageSavedCallback {
                             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                                 Log.d("CameraScreen", "Save a picture: Success")
+                                onCaptured.invoke(file.absolutePath)
                             }
 
                             override fun onError(exception: ImageCaptureException) {
