@@ -2,10 +2,12 @@ package com.shirosoftware.sealprogrammingmobile.di
 
 import android.content.Context
 import com.shirosoftware.sealprogrammingmobile.camera.CameraController
+import com.shirosoftware.sealprogrammingmobile.camera.ImageDataSource
 import com.shirosoftware.sealprogrammingmobile.data.SettingsDataStore
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnection
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
+import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
 import com.shirosoftware.sealprogrammingmobile.repository.SettingsRepository
 import dagger.Module
 import dagger.Provides
@@ -19,6 +21,16 @@ class Modules {
     @Provides
     fun provideCameraController(@ApplicationContext context: Context): CameraController {
         return CameraController(context)
+    }
+
+    @Provides
+    fun provideImageDataSource(@ApplicationContext context: Context): ImageDataSource {
+        return ImageDataSource(context)
+    }
+
+    @Provides
+    fun provideImageRepository(imageDataSource: ImageDataSource): ImageRepository {
+        return ImageRepository(imageDataSource)
     }
 
     @Provides

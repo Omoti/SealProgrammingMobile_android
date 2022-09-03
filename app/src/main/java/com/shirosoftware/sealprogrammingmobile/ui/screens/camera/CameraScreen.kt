@@ -1,7 +1,5 @@
 package com.shirosoftware.sealprogrammingmobile.ui.screens.camera
 
-import android.content.Context
-import android.os.Environment
 import android.util.Log
 import android.view.ViewGroup
 import androidx.camera.core.CameraSelector
@@ -26,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.content.ContextCompat
-import java.io.File
 
 @Composable
 fun CameraScreen(
@@ -107,8 +104,9 @@ fun CameraScreen(
                         centerTo(parent)
                     },
                 onClick = {
+                    val file = viewModel.createImageFile()
                     val outputOptions = ImageCapture.OutputFileOptions
-                        .Builder(createImageFile(context))
+                        .Builder(file)
                         .build()
 
                     imageCapture.takePicture(outputOptions,
@@ -135,13 +133,4 @@ fun CameraScreen(
             )
         }
     }
-}
-
-private fun createImageFile(context: Context): File {
-    val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-    return File.createTempFile(
-        "image", /* prefix */
-        ".jpg", /* suffix */
-        storageDir /* directory */
-    )
 }
