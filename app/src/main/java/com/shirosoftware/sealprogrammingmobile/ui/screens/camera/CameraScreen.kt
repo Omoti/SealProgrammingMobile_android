@@ -1,7 +1,7 @@
 package com.shirosoftware.sealprogrammingmobile.ui.screens.camera
 
+import android.content.Context
 import android.util.Log
-import android.view.ViewGroup
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -23,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.content.ContextCompat
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @Composable
 fun CameraScreen(
@@ -35,9 +39,27 @@ fun CameraScreen(
     val context = LocalContext.current
     // val configuration = LocalConfiguration.current
 
-    val imageCapture = ImageCapture.Builder()
-        //.setTargetRotation(configuration.orientation) // 必要になったら有効化
+    val lensFacing = CameraSelector.LENS_FACING_BACK
+
+    val preview = Preview.Builder().build()
+    val previewView = remember { PreviewView(context) }
+    val imageCapture: ImageCapture = remember { ImageCapture.Builder().build() }
+    val cameraSelector = CameraSelector.Builder()
+        .requireLensFacing(lensFacing)
         .build()
+
+    LaunchedEffect(lensFacing) {
+        val cameraProvider = context.getCameraProvider()
+        cameraProvider.unbindAll()
+        cameraProvider.bindToLifecycle(
+            lifecycleOwner,
+            cameraSelector,
+            preview,
+            imageCapture
+        )
+
+        preview.setSurfaceProvider(previewView.surfaceProvider)
+    }
 
     Column(modifier = modifier.background(Color.Black)) {
         // プレビュー
@@ -45,53 +67,11 @@ fun CameraScreen(
             modifier = modifier
                 .fillMaxWidth()
                 .aspectRatio(3.0f / 4.0f),
-            factory = { context ->
-
-                // プレビュー
-                // https://developer.android.com/training/camerax/preview?hl=ja
-                val scaleType = PreviewView.ScaleType.FILL_CENTER
-
-                val previewView = PreviewView(context).apply {
-                    this.scaleType = scaleType
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                    )
-                    implementationMode = PreviewView.ImplementationMode.PERFORMANCE
-                }
-
-                val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-
-                cameraProviderFuture.addListener({
-                    val cameraProvider = cameraProviderFuture.get()
-
-                    val preview: Preview = Preview.Builder()
-                        .build()
-
-                    val cameraSelector: CameraSelector = CameraSelector.Builder()
-                        .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                        .build()
-
-                    preview.setSurfaceProvider(previewView.surfaceProvider)
-
-                    try {
-                        cameraProvider.unbindAll()
-                        cameraProvider.bindToLifecycle(
-                            lifecycleOwner,
-                            cameraSelector,
-                            imageCapture,
-                            preview,
-                        )
-                    } catch (e: Exception) {
-                        Log.e("CameraScreen", "Use case binding failed", e)
-                    }
-
-                }, ContextCompat.getMainExecutor(context))
-
+            factory = {
                 previewView
             },
         )
-
+        
         ConstraintLayout(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -135,3 +115,12 @@ fun CameraScreen(
         }
     }
 }
+
+private suspend fun Context.getCameraProvider(): ProcessCameraProvider =
+    suspendCoroutine { continuation ->
+        ProcessCameraProvider.getInstance(this).also { cameraProvider ->
+            cameraProvider.addListener({
+                continuation.resume(cameraProvider.get())
+            }, ContextCompat.getMainExecutor(this))
+        }
+    }
