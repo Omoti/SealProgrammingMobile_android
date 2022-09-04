@@ -66,6 +66,7 @@ fun CameraScreen(
             }
             is CameraState.Captured -> {
                 CameraCaptured(
+                    viewModel = viewModel,
                     path = _state.path,
                     modifier = Modifier.padding(innerPadding),
                     onCanceled = {

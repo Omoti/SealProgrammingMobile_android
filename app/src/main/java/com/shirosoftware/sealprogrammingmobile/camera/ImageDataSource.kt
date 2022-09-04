@@ -2,12 +2,15 @@ package com.shirosoftware.sealprogrammingmobile.camera
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Bitmap.CompressFormat
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.os.Environment
 import androidx.exifinterface.media.ExifInterface
 import java.io.File
+import java.io.FileOutputStream
 import javax.inject.Inject
+
 
 class ImageDataSource @Inject constructor(private val context: Context) {
     fun createImageFile(): File {
@@ -25,6 +28,19 @@ class ImageDataSource @Inject constructor(private val context: Context) {
 //            storageDir /* directory */
 //        )
 //    }
+
+    fun saveToResultFile(bitmap: Bitmap): File {
+        val result = File(
+            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                .toString() + File.separator + RESULT_IMAGE_FILE_NAME + IMAGE_SUFFIX
+        )
+
+        FileOutputStream(result).use {
+            bitmap.compress(CompressFormat.JPEG, 100, it)
+        }
+
+        return result
+    }
 
     fun getCapturedImage(path: String): Bitmap? {
         val bmOptions = BitmapFactory.Options().apply {
@@ -74,5 +90,6 @@ class ImageDataSource @Inject constructor(private val context: Context) {
     companion object {
         private const val IMAGE_FILE_NAME = "image"
         private const val IMAGE_SUFFIX = ".jpg"
+        private const val RESULT_IMAGE_FILE_NAME = "result"
     }
 }
