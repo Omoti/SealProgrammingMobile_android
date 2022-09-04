@@ -1,14 +1,13 @@
 package com.shirosoftware.sealprogrammingmobile.ui.screens.camera
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.sharp.Lens
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,20 +16,18 @@ import com.shirosoftware.sealprogrammingmobile.ui.theme.SealProgrammingMobileThe
 
 @Composable
 fun ShutterButton(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .padding(4.dp)
-            .border(width = 2.dp, shape = CircleShape, color = Color.White)
+    IconButton(
+        modifier = modifier,
+        onClick = onClick
     ) {
-        Button(
-            onClick = onClick,
-            shape = CircleShape,
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+        Icon(
+            Icons.Sharp.Lens,
+            contentDescription = null,
+            tint = Color.White,
             modifier = Modifier
-                .fillMaxSize()
-                .border(width = 6.dp, shape = CircleShape, color = Color.Black)
-        ) {}
+                .size(80.dp)
+                .border(1.dp, Color.White, CircleShape)
+        )
     }
 }
 

@@ -71,7 +71,7 @@ fun CameraScreen(
                 previewView
             },
         )
-        
+
         ConstraintLayout(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -79,7 +79,6 @@ fun CameraScreen(
 
             ShutterButton(
                 modifier = Modifier
-                    .size(88.dp)
                     .constrainAs(shutterButton) {
                         centerTo(parent)
                     },
