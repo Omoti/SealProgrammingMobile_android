@@ -31,18 +31,18 @@ fun CameraCaptured(
     onCanceled: () -> Unit = {},
     onCompleted: (path: String) -> Unit = {},
 ) {
-    val resultImagePath = viewModel.resultImagePath.collectAsState()
+    val capturedImagePath = viewModel.capturedImagePath.collectAsState()
 
     LaunchedEffect(path) {
         Log.d("CameraCaptured", "path: $path")
         viewModel.detectSeals(path)
     }
-    Log.d("CameraCaptured", "resultImagePath: ${resultImagePath.value}")
+    Log.d("CameraCaptured", "resultImagePath: ${capturedImagePath.value}")
     Column(
         modifier = modifier
             .background(Color.Black)
     ) {
-        resultImagePath.value?.let {
+        capturedImagePath.value?.let {
             Image(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -75,7 +75,10 @@ fun CameraCaptured(
             }
             Button(
                 onClick = {
-                    resultImagePath.value?.let { onCompleted.invoke(it) }
+                    capturedImagePath.value?.let {
+                        val result = viewModel.updateResult(it)
+                        onCompleted.invoke(result.absolutePath)
+                    }
                 }) {
                 Text("OK")
             }

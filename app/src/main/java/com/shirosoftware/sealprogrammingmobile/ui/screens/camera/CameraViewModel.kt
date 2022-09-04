@@ -24,8 +24,8 @@ class CameraViewModel @Inject constructor(
     private val _state = MutableStateFlow<CameraState>(CameraState.Ready)
     val state: StateFlow<CameraState> = _state
 
-    private val _resultImagePath = MutableStateFlow<String?>(null)
-    val resultImagePath: StateFlow<String?> = _resultImagePath
+    private val _capturedImagePath = MutableStateFlow<String?>(null)
+    val capturedImagePath: StateFlow<String?> = _capturedImagePath
 
     private var results: List<DetectionResult>? = null
 
@@ -35,7 +35,7 @@ class CameraViewModel @Inject constructor(
 
     fun updateState(state: CameraState) {
         if (state == CameraState.Ready) {
-            _resultImagePath.value = null
+            _capturedImagePath.value = null
         }
 
         _state.value = state
@@ -50,11 +50,15 @@ class CameraViewModel @Inject constructor(
             bitmap?.let {
                 val detectionResults = sealDetector.runObjectDetection(bitmap, threshold)
                 sealDetector.drawDetectionResult(bitmap, detectionResults).also {
-                    _resultImagePath.value = repository.saveBitmap(it).absolutePath
+                    _capturedImagePath.value = repository.saveBitmap(it).absolutePath
                 }
 
                 results = detectionResults
             }
         }
+    }
+
+    fun updateResult(path: String): File {
+        return repository.updateResult(path)
     }
 }

@@ -42,6 +42,18 @@ class ImageDataSource @Inject constructor(private val context: Context) {
         return result
     }
 
+    fun updateResult(path: String): File {
+        val src = File(path)
+        val dest = File(
+            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                .toString() + File.separator + RESULT_FILE_NAME + IMAGE_SUFFIX
+        )
+
+        src.copyTo(dest, true)
+
+        return dest
+    }
+
     fun getCapturedImage(path: String): Bitmap? {
         val bmOptions = BitmapFactory.Options().apply {
             // Get the dimensions of the bitmap
@@ -91,5 +103,6 @@ class ImageDataSource @Inject constructor(private val context: Context) {
         private const val IMAGE_FILE_NAME = "image"
         private const val IMAGE_SUFFIX = ".jpg"
         private const val CAPTURED_FILE_NAME = "captured"
+        private const val RESULT_FILE_NAME = "result"
     }
 }

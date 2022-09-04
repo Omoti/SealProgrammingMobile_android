@@ -14,6 +14,10 @@ class ImageRepository @Inject constructor(private val imageDataSource: ImageData
         return imageDataSource.saveBitmap(bitmap)
     }
 
+    fun updateResult(path: String): File {
+        return imageDataSource.updateResult(path)
+    }
+
     fun getCapturedImage(path: String): Bitmap? {
         return imageDataSource.getCapturedImage(path)
     }
