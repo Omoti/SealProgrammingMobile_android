@@ -48,7 +48,7 @@ fun CircleButton(
             Icon(
                 icon,
                 contentDescription = text,
-                modifier = modifier
+                modifier = Modifier
                     .width(24.dp)
                     .height(24.dp),
                 tint = Color.White,
