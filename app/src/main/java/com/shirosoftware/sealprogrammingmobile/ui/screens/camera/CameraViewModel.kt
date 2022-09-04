@@ -34,6 +34,10 @@ class CameraViewModel @Inject constructor(
     }
 
     fun updateState(state: CameraState) {
+        if (state == CameraState.Ready) {
+            _resultImagePath.value = null
+        }
+        
         _state.value = state
     }
 
