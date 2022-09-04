@@ -16,7 +16,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -39,7 +42,9 @@ fun CameraScreen(
     val context = LocalContext.current
     // val configuration = LocalConfiguration.current
 
-    val lensFacing = CameraSelector.LENS_FACING_BACK
+    var lensFacing by remember {
+        mutableStateOf(CameraSelector.LENS_FACING_BACK)
+    }
 
     val preview = Preview.Builder().build()
     val previewView = remember { PreviewView(context) }
@@ -110,7 +115,12 @@ fun CameraScreen(
                         start.linkTo(shutterButton.end)
                         end.linkTo(parent.end)
                     },
-            )
+            ) {
+                lensFacing =
+                    if (lensFacing == CameraSelector.LENS_FACING_FRONT)
+                        CameraSelector.LENS_FACING_BACK
+                    else CameraSelector.LENS_FACING_FRONT
+            }
         }
     }
 }
