@@ -48,6 +48,9 @@ fun AppNavHost(navController: NavHostController) {
                     }
                     navController.popBackStack()
                 },
+                onClickSettings = {
+                    navController.navigate("settings")
+                },
                 onBack = {
                     navController.popBackStack()
                 })
