@@ -26,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,17 +66,22 @@ fun CameraScreen(
         .requireLensFacing(lensFacing)
         .build()
 
-    LaunchedEffect(lensFacing) {
+    val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(lensFacing, state) {
         val cameraProvider = context.getCameraProvider()
         cameraProvider.unbindAll()
-        cameraProvider.bindToLifecycle(
-            lifecycleOwner,
-            cameraSelector,
-            preview,
-            imageCapture
-        )
 
-        preview.setSurfaceProvider(previewView.surfaceProvider)
+        if (state == CameraState.Ready) {
+            cameraProvider.bindToLifecycle(
+                lifecycleOwner,
+                cameraSelector,
+                preview,
+                imageCapture
+            )
+
+            preview.setSurfaceProvider(previewView.surfaceProvider)
+        }
     }
 
     Scaffold(
@@ -104,64 +110,76 @@ fun CameraScreen(
             )
         },
     ) { innerPadding ->
-        Column(
-            modifier = modifier
-                .padding(innerPadding)
-                .background(Color.Black)
-        ) {
-            // プレビュー
-            AndroidView(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .aspectRatio(3.0f / 4.0f),
-                factory = {
-                    previewView
-                },
-            )
-
-            ConstraintLayout(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                val (shutterButton, switchButton) = createRefs()
-
-                ShutterButton(
-                    modifier = Modifier
-                        .constrainAs(shutterButton) {
-                            centerTo(parent)
-                        },
-                    onClick = {
-                        val file = viewModel.createImageFile()
-                        val outputOptions = ImageCapture.OutputFileOptions
-                            .Builder(file)
-                            .build()
-
-                        imageCapture.takePicture(outputOptions,
-                            ContextCompat.getMainExecutor(context),
-                            object : ImageCapture.OnImageSavedCallback {
-                                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                                    Log.d("CameraScreen", "Save a picture: Success")
-                                    onCaptured.invoke(file.absolutePath)
-                                }
-
-                                override fun onError(exception: ImageCaptureException) {
-                                    Log.e("CameraScreen", "Save a picture: Error", exception)
-                                }
-                            })
-                    }
-                )
-                SwitchCameraButton(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .constrainAs(switchButton) {
-                            centerVerticallyTo(parent)
-                            start.linkTo(shutterButton.end)
-                            end.linkTo(parent.end)
-                        },
+        when (state) {
+            CameraState.Captured -> {
+                
+            }
+            CameraState.Ready -> {
+                Column(
+                    modifier = modifier
+                        .padding(innerPadding)
+                        .background(Color.Black)
                 ) {
-                    lensFacing =
-                        if (lensFacing == CameraSelector.LENS_FACING_FRONT)
-                            CameraSelector.LENS_FACING_BACK
-                        else CameraSelector.LENS_FACING_FRONT
+                    // プレビュー
+                    AndroidView(
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .aspectRatio(3.0f / 4.0f),
+                        factory = {
+                            previewView
+                        },
+                    )
+
+                    ConstraintLayout(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        val (shutterButton, switchButton) = createRefs()
+
+                        ShutterButton(
+                            modifier = Modifier
+                                .constrainAs(shutterButton) {
+                                    centerTo(parent)
+                                },
+                            onClick = {
+                                val file = viewModel.createImageFile()
+                                val outputOptions = ImageCapture.OutputFileOptions
+                                    .Builder(file)
+                                    .build()
+
+                                imageCapture.takePicture(outputOptions,
+                                    ContextCompat.getMainExecutor(context),
+                                    object : ImageCapture.OnImageSavedCallback {
+                                        override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                                            Log.d("CameraScreen", "Save a picture: Success")
+                                            //onCaptured.invoke(file.absolutePath)
+                                            viewModel.updateState(CameraState.Captured)
+                                        }
+
+                                        override fun onError(exception: ImageCaptureException) {
+                                            Log.e(
+                                                "CameraScreen",
+                                                "Save a picture: Error",
+                                                exception
+                                            )
+                                        }
+                                    })
+                            }
+                        )
+                        SwitchCameraButton(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .constrainAs(switchButton) {
+                                    centerVerticallyTo(parent)
+                                    start.linkTo(shutterButton.end)
+                                    end.linkTo(parent.end)
+                                },
+                        ) {
+                            lensFacing =
+                                if (lensFacing == CameraSelector.LENS_FACING_FRONT)
+                                    CameraSelector.LENS_FACING_BACK
+                                else CameraSelector.LENS_FACING_FRONT
+                        }
+                    }
                 }
             }
         }
