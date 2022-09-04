@@ -17,10 +17,14 @@ fun AppNavHost(navController: NavHostController) {
         navController = navController,
         startDestination = "main",
     ) {
-        composable("main") { backStackEntry ->
+        composable("main") {
+            val imagePath = navController.currentBackStackEntry
+                ?.savedStateHandle
+                ?.get<String>("path")
+
             MainScreen(
                 hiltViewModel(),
-                imagePath = backStackEntry.arguments?.getString("path"),
+                imagePath = imagePath,
                 onClickCamera = {
                     navController.navigate("camera")
                 },
