@@ -37,7 +37,7 @@ class CameraViewModel @Inject constructor(
         if (state == CameraState.Ready) {
             _resultImagePath.value = null
         }
-        
+
         _state.value = state
     }
 
@@ -50,7 +50,7 @@ class CameraViewModel @Inject constructor(
             bitmap?.let {
                 val detectionResults = sealDetector.runObjectDetection(bitmap, threshold)
                 sealDetector.drawDetectionResult(bitmap, detectionResults).also {
-                    _resultImagePath.value = repository.saveToResultFile(it).absolutePath
+                    _resultImagePath.value = repository.saveBitmap(it).absolutePath
                 }
 
                 results = detectionResults

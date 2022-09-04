@@ -29,10 +29,10 @@ class ImageDataSource @Inject constructor(private val context: Context) {
 //        )
 //    }
 
-    fun saveToResultFile(bitmap: Bitmap): File {
+    fun saveBitmap(bitmap: Bitmap): File {
         val result = File(
             context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-                .toString() + File.separator + RESULT_IMAGE_FILE_NAME + IMAGE_SUFFIX
+                .toString() + File.separator + CAPTURED_FILE_NAME + IMAGE_SUFFIX
         )
 
         FileOutputStream(result).use {
@@ -90,6 +90,6 @@ class ImageDataSource @Inject constructor(private val context: Context) {
     companion object {
         private const val IMAGE_FILE_NAME = "image"
         private const val IMAGE_SUFFIX = ".jpg"
-        private const val RESULT_IMAGE_FILE_NAME = "result"
+        private const val CAPTURED_FILE_NAME = "captured"
     }
 }

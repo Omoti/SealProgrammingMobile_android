@@ -10,8 +10,8 @@ class ImageRepository @Inject constructor(private val imageDataSource: ImageData
         return imageDataSource.createImageFile()
     }
 
-    fun saveToResultFile(bitmap: Bitmap): File {
-        return imageDataSource.saveToResultFile(bitmap)
+    fun saveBitmap(bitmap: Bitmap): File {
+        return imageDataSource.saveBitmap(bitmap)
     }
 
     fun getCapturedImage(path: String): Bitmap? {
