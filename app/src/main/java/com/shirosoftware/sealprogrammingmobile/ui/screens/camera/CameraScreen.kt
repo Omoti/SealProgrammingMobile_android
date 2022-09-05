@@ -44,12 +44,14 @@ fun CameraScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = onClickSettings) {
-                        Icon(
-                            Icons.Default.Settings,
-                            contentDescription = null,
-                            tint = Color.White,
-                        )
+                    if (state is CameraState.Captured) {
+                        IconButton(onClick = onClickSettings) {
+                            Icon(
+                                Icons.Default.Settings,
+                                contentDescription = null,
+                                tint = Color.White,
+                            )
+                        }
                     }
                 }
             )

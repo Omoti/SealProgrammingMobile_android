@@ -20,8 +20,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
@@ -29,7 +27,6 @@ import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.BluetoothConnected
 import androidx.compose.material.icons.filled.ElectricCar
 import androidx.compose.material.icons.filled.PhotoCamera
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -83,7 +80,6 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     detectionResult: SealDetectionResult? = null,
     onClickCamera: () -> Unit = {},
-    onClickSettings: () -> Unit = {},
 ) {
     val toast = Toast.makeText(
         LocalContext.current,
@@ -194,15 +190,6 @@ fun MainScreen(
                         )
                     },
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Primary),
-                    actions = {
-                        IconButton(onClick = onClickSettings) {
-                            Icon(
-                                Icons.Default.Settings,
-                                contentDescription = null,
-                                tint = Color.White,
-                            )
-                        }
-                    }
                 )
             },
         ) { innerPadding ->

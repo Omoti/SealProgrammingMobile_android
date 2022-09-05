@@ -28,9 +28,7 @@ fun AppNavHost(navController: NavHostController, sharedViewModel: SharedViewMode
                 onClickCamera = {
                     navController.navigate("camera")
                 },
-                onClickSettings = {
-                    navController.navigate("settings")
-                })
+            )
         }
         composable("settings") {
             SettingsScreen(
