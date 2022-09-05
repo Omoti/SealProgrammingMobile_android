@@ -15,13 +15,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.shirosoftware.sealprogrammingmobile.data.SealDetectionResult
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraScreen(
     viewModel: CameraViewModel,
     modifier: Modifier = Modifier,
-    onCaptured: (path: String) -> Unit = {},
+    onCompleted: (result: SealDetectionResult) -> Unit = {},
     onClickSettings: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
@@ -73,7 +74,7 @@ fun CameraScreen(
                         viewModel.updateState(CameraState.Ready)
                     },
                     onCompleted = {
-                        onCaptured.invoke(it)
+                        onCompleted.invoke(it)
                     },
                 )
             }

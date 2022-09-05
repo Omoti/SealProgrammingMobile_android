@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.shirosoftware.sealprogrammingmobile.ui.navigation.AppNavHost
 import com.shirosoftware.sealprogrammingmobile.ui.theme.SealProgrammingMobileTheme
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    AppNavHost(navController = rememberAnimatedNavController())
+                    AppNavHost(navController = rememberAnimatedNavController(), hiltViewModel())
                 }
             }
         }

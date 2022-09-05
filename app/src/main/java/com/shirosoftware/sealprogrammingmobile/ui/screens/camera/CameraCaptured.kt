@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.rememberImagePainter
+import com.shirosoftware.sealprogrammingmobile.data.SealDetectionResult
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
 import com.shirosoftware.sealprogrammingmobile.ui.theme.Primary
 import java.io.File
@@ -35,25 +36,25 @@ fun CameraCaptured(
     path: String,
     modifier: Modifier = Modifier,
     onCanceled: () -> Unit = {},
-    onCompleted: (path: String) -> Unit = {},
+    onCompleted: (result: SealDetectionResult) -> Unit = {},
 ) {
-    val capturedImagePath = viewModel.capturedImagePath.collectAsState()
+    val result = viewModel.result.collectAsState()
 
     LaunchedEffect(path) {
         Log.d("CameraCaptured", "path: $path")
         viewModel.detectSeals(path)
     }
-    Log.d("CameraCaptured", "resultImagePath: ${capturedImagePath.value}")
+    Log.d("CameraCaptured", "resultImagePath: ${result.value}")
     Column(
         modifier = modifier
             .background(Color.Black)
     ) {
-        capturedImagePath.value?.let {
+        result.value?.let {
             Image(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(3.0f / 4.0f),
-                painter = rememberImagePainter(File(it)),
+                painter = rememberImagePainter(File(it.imagePath)),
                 contentDescription = null,
             )
         } ?: Box(
@@ -101,9 +102,9 @@ fun CameraCaptured(
                     }
                     .border(1.dp, Color.White, CircleShape),
                 onClick = {
-                    capturedImagePath.value?.let {
-                        val result = viewModel.updateResult(it)
-                        onCompleted.invoke(result.absolutePath)
+                    result.value?.let {
+                        viewModel.updateResult(it.imagePath)
+                        onCompleted.invoke(it)
                     }
                 })
         }

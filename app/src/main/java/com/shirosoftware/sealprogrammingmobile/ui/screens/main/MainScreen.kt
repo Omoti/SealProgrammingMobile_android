@@ -59,6 +59,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.shirosoftware.sealprogrammingmobile.R
 import com.shirosoftware.sealprogrammingmobile.camera.ImageDataSource
+import com.shirosoftware.sealprogrammingmobile.data.SealDetectionResult
 import com.shirosoftware.sealprogrammingmobile.data.SettingsDataStore
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnection
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnectionState
@@ -83,7 +84,7 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     viewModel: MainViewModel,
     modifier: Modifier = Modifier,
-    imagePath: String? = null,
+    detectionResult: SealDetectionResult? = null,
     onClickCamera: () -> Unit = {},
     onClickSettings: () -> Unit = {},
 ) {
@@ -166,9 +167,9 @@ fun MainScreen(
         }
     }
 
-    LaunchedEffect(imagePath) {
-        Log.d("MainScreen", "imagePath: $imagePath")
-        imagePath?.let { viewModel.loadCapturedImage(it) }
+    LaunchedEffect(detectionResult) {
+        Log.d("MainScreen", "imagePath: ${detectionResult?.imagePath}")
+        detectionResult?.let { viewModel.loadCapturedImage(detectionResult.imagePath) }
     }
 
     ModalBottomSheetLayout(

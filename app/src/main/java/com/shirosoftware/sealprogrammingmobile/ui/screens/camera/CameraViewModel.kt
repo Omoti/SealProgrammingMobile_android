@@ -2,7 +2,7 @@ package com.shirosoftware.sealprogrammingmobile.ui.screens.camera
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.shirosoftware.sealprogrammingmobile.ml.DetectionResult
+import com.shirosoftware.sealprogrammingmobile.data.SealDetectionResult
 import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
 import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
 import com.shirosoftware.sealprogrammingmobile.repository.SettingsRepository
@@ -24,10 +24,8 @@ class CameraViewModel @Inject constructor(
     private val _state = MutableStateFlow<CameraState>(CameraState.Ready)
     val state: StateFlow<CameraState> = _state
 
-    private val _capturedImagePath = MutableStateFlow<String?>(null)
-    val capturedImagePath: StateFlow<String?> = _capturedImagePath
-
-    private var results: List<DetectionResult>? = null
+    private val _result = MutableStateFlow<SealDetectionResult?>(null)
+    val result: StateFlow<SealDetectionResult?> = _result
 
     fun createImageFile(): File {
         return repository.createImageFile()
@@ -35,7 +33,7 @@ class CameraViewModel @Inject constructor(
 
     fun updateState(state: CameraState) {
         if (state == CameraState.Ready) {
-            _capturedImagePath.value = null
+            _result.value = null
         }
 
         _state.value = state
@@ -50,10 +48,13 @@ class CameraViewModel @Inject constructor(
             bitmap?.let {
                 val detectionResults = sealDetector.runObjectDetection(bitmap, threshold)
                 sealDetector.drawDetectionResult(bitmap, detectionResults).also {
-                    _capturedImagePath.value = repository.saveBitmap(it).absolutePath
-                }
+                    _result.value =
+                        SealDetectionResult(
+                            repository.saveBitmap(it).absolutePath,
+                            detectionResults
+                        )
 
-                results = detectionResults
+                }
             }
         }
     }

@@ -2,6 +2,8 @@ package com.shirosoftware.sealprogrammingmobile.ui.navigation
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -12,19 +14,17 @@ import com.shirosoftware.sealprogrammingmobile.ui.screens.settings.SettingsScree
 
 @ExperimentalAnimationApi
 @Composable
-fun AppNavHost(navController: NavHostController) {
+fun AppNavHost(navController: NavHostController, sharedViewModel: SharedViewModel) {
+    val detectionResult by sharedViewModel.result.collectAsState()
+
     AnimatedNavHost(
         navController = navController,
         startDestination = "main",
     ) {
         composable("main") {
-            val imagePath = navController.currentBackStackEntry
-                ?.savedStateHandle
-                ?.get<String>("path")
-
             MainScreen(
                 hiltViewModel(),
-                imagePath = imagePath,
+                detectionResult = detectionResult,
                 onClickCamera = {
                     navController.navigate("camera")
                 },
@@ -42,10 +42,8 @@ fun AppNavHost(navController: NavHostController) {
         composable("camera") {
             CameraScreen(
                 hiltViewModel(),
-                onCaptured = { path ->
-                    navController.previousBackStackEntry?.savedStateHandle?.let {
-                        it["path"] = path
-                    }
+                onCompleted = { result ->
+                    sharedViewModel.updateResult(result)
                     navController.popBackStack()
                 },
                 onClickSettings = {
