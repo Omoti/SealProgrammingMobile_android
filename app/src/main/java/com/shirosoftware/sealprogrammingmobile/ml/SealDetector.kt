@@ -89,11 +89,13 @@ class SealDetector @Inject constructor(private val context: Context) {
             // adjust the font size so texts are inside the bounding box
             if (fontSize < pen.textSize) pen.textSize = fontSize
 
+            val textTop = box.top - (box.top - box.bottom) / 2 - (tagSize.height() / 2)
+
             var margin = (box.width() - tagSize.width()) / 2.0F
             if (margin < 0F) margin = 0F
             canvas.drawText(
                 text, box.left + margin,
-                box.top + tagSize.height().times(1F), pen
+                textTop, pen
             )
         }
         return outputBitmap
