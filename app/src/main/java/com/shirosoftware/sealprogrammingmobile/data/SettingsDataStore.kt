@@ -22,6 +22,6 @@ class SettingsDataStore @Inject constructor(val context: Context) {
 
     private companion object {
         val KEY_THRESHOLD = floatPreferencesKey("threshold")
-        const val DEFAULT_THRESHOLD = 0.5f
+        const val DEFAULT_THRESHOLD = 0.4f
     }
 }

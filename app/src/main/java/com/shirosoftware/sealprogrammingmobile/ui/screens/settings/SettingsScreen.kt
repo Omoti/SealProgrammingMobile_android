@@ -45,7 +45,7 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
 ) {
-    val sliderPosition = viewModel.threshold.collectAsState(initial = 0.5f)
+    val sliderPosition = viewModel.threshold.collectAsState(initial = 0.0f)
 
     Scaffold(
         modifier = modifier,
