@@ -60,13 +60,10 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.shirosoftware.sealprogrammingmobile.R
 import com.shirosoftware.sealprogrammingmobile.camera.ImageDataSource
 import com.shirosoftware.sealprogrammingmobile.data.SealDetectionResult
-import com.shirosoftware.sealprogrammingmobile.data.SettingsDataStore
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnection
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnectionState
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
-import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
 import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
-import com.shirosoftware.sealprogrammingmobile.repository.SettingsRepository
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
 import com.shirosoftware.sealprogrammingmobile.ui.theme.BackgroundDark
 import com.shirosoftware.sealprogrammingmobile.ui.theme.Primary
@@ -95,13 +92,6 @@ fun MainScreen(
     )
 
     val bitmap = viewModel.bitmap.collectAsState()
-//    val launcher = rememberLauncherForActivityResult(
-//        contract = ActivityResultContracts.StartActivityForResult(),
-//        onResult = { result ->
-//            if (result.resultCode != RESULT_OK) return@rememberLauncherForActivityResult
-//            viewModel.loadCapturedImage()
-//        }
-//    )
 
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
@@ -291,12 +281,14 @@ fun MainScreen(
                         CircleButton(
                             Icons.Default.ElectricCar,
                             stringResource(id = R.string.main_button_send),
-                            onClick = { viewModel.sendCommand() },
+                            onClick = {
+                                detectionResult?.let { viewModel.sendCommand(it.detectionResults) }
+                            },
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = Secondary,
                                 disabledBackgroundColor = SecondaryDisable,
                             ),
-                            enabled = (bitmap.value != null
+                            enabled = (detectionResult != null
                                     && connectionState.value == BluetoothConnectionState.Connected)
                                     && writing.value != WriteState.Writing
                         )
@@ -335,10 +327,8 @@ fun MainScreenPreview() {
     SealProgrammingMobileTheme {
         MainScreen(
             MainViewModel(
-                SealDetector(context),
                 BluetoothController(context, BluetoothConnection()),
                 ImageRepository(ImageDataSource((context))),
-                SettingsRepository(SettingsDataStore(context))
             )
         )
     }

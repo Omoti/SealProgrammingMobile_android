@@ -7,9 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.shirosoftware.sealprogrammingmobile.converter.DetectionResultsConverter
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.ml.DetectionResult
-import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
 import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
-import com.shirosoftware.sealprogrammingmobile.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.delay
@@ -19,10 +17,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val sealDetector: SealDetector,
     private val bluetoothController: BluetoothController,
     private val imageRepository: ImageRepository,
-    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
     private val _bitmap = MutableStateFlow<Bitmap?>(null)
     val bitmap: StateFlow<Bitmap?> = _bitmap
@@ -33,28 +29,13 @@ class MainViewModel @Inject constructor(
     private val _selectedDevice = MutableStateFlow<BluetoothDevice?>(null)
     val selectedDevice: StateFlow<BluetoothDevice?> = _selectedDevice
 
-    private var results: List<DetectionResult>? = null
-
     val connectionState = bluetoothController.connectionState
 
     private val _writing = MutableStateFlow<WriteState>(WriteState.Ready)
     val writing: StateFlow<WriteState> = _writing
 
-//    fun dispatchTakePicture(): Intent? =
-//        cameraController.dispatchTakePictureIntent()
-
     fun loadCapturedImage(path: String) {
         _bitmap.value = imageRepository.getCapturedImage(path)
-//
-//        viewModelScope.launch(Dispatchers.IO) {
-//            val threshold = settingsRepository.threshold.first()
-//
-//            _bitmap.value?.let { bitmap ->
-//                val detectionResults = sealDetector.runObjectDetection(bitmap, threshold)
-//                _bitmap.value = sealDetector.drawDetectionResult(bitmap, detectionResults)
-//                results = detectionResults
-//            }
-//        }
     }
 
     fun startSearchDevices() {
@@ -88,20 +69,18 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun sendCommand() {
-        results?.let {
-            val commands = DetectionResultsConverter.convertResultsToCommands(it)
+    fun sendCommand(results: List<DetectionResult>) {
+        val commands = DetectionResultsConverter.convertResultsToCommands(results)
 
-            viewModelScope.launch {
-                _writing.emit(WriteState.Writing)
+        viewModelScope.launch {
+            _writing.emit(WriteState.Writing)
 
-                bluetoothController.write(commands)
+            bluetoothController.write(commands)
 
-                // 演出のためのdelay
-                delay(500)
+            // 演出のためのdelay
+            delay(500)
 
-                _writing.emit(WriteState.Completed)
-            }
+            _writing.emit(WriteState.Completed)
         }
     }
 
