@@ -34,7 +34,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
@@ -125,11 +124,11 @@ fun MainScreen(
         }
     }
 
-    DisposableEffect(viewModel) {
-        onDispose {
-            viewModel.disconnect()
-        }
-    }
+//    DisposableEffect(viewModel) {
+//        onDispose {
+//            viewModel.disconnect()
+//        }
+//    }
 
     // デバイス一覧で検索状態を連動
     LaunchedEffect(sheetState.isVisible) {
