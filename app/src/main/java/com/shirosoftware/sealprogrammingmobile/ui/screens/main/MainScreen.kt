@@ -167,53 +167,54 @@ fun MainScreen(
         detectionResult?.let { viewModel.loadCapturedImage(detectionResult.imagePath) }
     }
 
-    ModalBottomSheetLayout(
-        sheetState = sheetState,
-        sheetShape = RoundedCornerShape(topEnd = 16.dp, topStart = 16.dp),
-        sheetContent = {
-            when (sheetType) {
-                SheetType.DeviceList -> DeviceList(
-                    state = bluetoothState.value,
-                    connectedDevice = device.value,
-                    onClickItem = { device ->
-                        scope.launch {
-                            sheetState.hide()
-                            viewModel.connect(device)
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.app_name),
+                        color = Color.White,
+                    )
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Primary),
+            )
+        },
+    ) { innerPadding ->
+        ModalBottomSheetLayout(
+            modifier = modifier.padding(innerPadding),
+            sheetState = sheetState,
+            sheetShape = RoundedCornerShape(topEnd = 16.dp, topStart = 16.dp),
+            sheetContent = {
+                when (sheetType) {
+                    SheetType.DeviceList -> DeviceList(
+                        state = bluetoothState.value,
+                        connectedDevice = device.value,
+                        onClickItem = { device ->
+                            scope.launch {
+                                sheetState.hide()
+                                viewModel.connect(device)
+                            }
+                        },
+                        onClickDisconnectDevice = {
+                            scope.launch {
+                                sheetState.hide()
+                                viewModel.disconnect()
+                            }
                         }
-                    },
-                    onClickDisconnectDevice = {
-                        scope.launch {
-                            sheetState.hide()
-                            viewModel.disconnect()
+                    )
+                    SheetType.CommandList -> {
+                        detectionResult?.detectionResults?.let {
+                            CommandList(detectionResults = it)
                         }
-                    }
-                )
-                SheetType.CommandList -> {
-                    detectionResult?.detectionResults?.let {
-                        CommandList(detectionResults = it)
                     }
                 }
-            }
 
-        },
-    ) {
-        Scaffold(
-            topBar = {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            text = stringResource(id = R.string.app_name),
-                            color = Color.White,
-                        )
-                    },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Primary),
-                )
             },
-        ) { innerPadding ->
+        ) {
             Column(
                 modifier = modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
                     .background(Color.White),
             ) {
                 Box(
