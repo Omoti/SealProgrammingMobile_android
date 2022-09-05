@@ -106,8 +106,8 @@ fun CameraCaptured(
                     .border(1.dp, Color.White, CircleShape),
                 onClick = {
                     result.value?.let {
-                        viewModel.updateResult(it.imagePath)
-                        onCompleted.invoke(it)
+                        val updatedResult = viewModel.updateResult(it.imagePath)
+                        onCompleted.invoke(updatedResult)
                     }
                 })
         }

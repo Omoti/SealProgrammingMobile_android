@@ -56,13 +56,15 @@ class CameraViewModel @Inject constructor(
                             repository.saveBitmap(it).absolutePath,
                             detectionResults
                         )
-
                 }
             }
         }
     }
 
-    fun updateResult(path: String): File {
-        return repository.updateResult(path)
+    fun updateResult(path: String): SealDetectionResult {
+        return SealDetectionResult(
+            repository.updateResult(path).absolutePath,
+            _result.value?.detectionResults ?: listOf()
+        )
     }
 }
