@@ -89,4 +89,9 @@ class MainViewModel @Inject constructor(
             _writing.emit(WriteState.Ready)
         }
     }
+
+    override fun onCleared() {
+        disconnect()
+        super.onCleared()
+    }
 }
