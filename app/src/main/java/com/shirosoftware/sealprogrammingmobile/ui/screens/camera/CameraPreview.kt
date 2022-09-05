@@ -9,10 +9,15 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,8 +25,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
@@ -53,6 +60,9 @@ fun CameraPreview(
         .requireLensFacing(lensFacing)
         .build()
 
+    var showGuide by remember {
+        mutableStateOf(true)
+    }
 
     LaunchedEffect(lensFacing) {
         val cameraProvider = context.getCameraProvider()
@@ -72,16 +82,34 @@ fun CameraPreview(
         modifier = modifier
             .background(Color.Black)
     ) {
-        // プレビュー
-        AndroidView(
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(3.0f / 4.0f),
-            factory = {
-                previewView
-            },
-        )
+                .aspectRatio(3.0f / 4.0f)
+                .clickable {
+                    showGuide = !showGuide
+                },
+        ) {
+            // プレビュー
+            AndroidView(
+                modifier = Modifier.fillMaxSize(),
+                factory = {
+                    previewView
+                },
+            )
 
+            // ガイド
+            if (showGuide) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(12.dp)
+                        .aspectRatio(2.0f / 3.0f)
+                        .border(2.dp, Color.Red, RectangleShape)
+                )
+            }
+        }
         ConstraintLayout(
             modifier = Modifier.fillMaxSize()
         ) {
