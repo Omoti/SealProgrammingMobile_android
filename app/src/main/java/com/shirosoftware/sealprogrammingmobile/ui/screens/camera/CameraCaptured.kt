@@ -3,7 +3,6 @@ package com.shirosoftware.sealprogrammingmobile.ui.screens.camera
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ExperimentalMaterialApi
@@ -120,11 +118,6 @@ fun CameraCaptured(
                 CircleButton(
                     icon = Icons.Default.Check,
                     text = "OK",
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Black,
-                    ),
-                    modifier = Modifier
-                        .border(1.dp, Color.White, CircleShape),
                     onClick = {
                         result.value?.let {
                             val updatedResult = viewModel.updateResult(it.imagePath)
