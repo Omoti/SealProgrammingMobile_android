@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.IconButton
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
@@ -27,9 +29,11 @@ import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.BluetoothConnected
 import androidx.compose.material.icons.filled.ElectricCar
 import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.rounded.List
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -37,7 +41,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -61,6 +69,7 @@ import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnect
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
+import com.shirosoftware.sealprogrammingmobile.ui.screens.commands.CommandList
 import com.shirosoftware.sealprogrammingmobile.ui.theme.BackgroundDark
 import com.shirosoftware.sealprogrammingmobile.ui.theme.Primary
 import com.shirosoftware.sealprogrammingmobile.ui.theme.SealProgrammingMobileTheme
@@ -92,6 +101,7 @@ fun MainScreen(
     val sheetState = rememberModalBottomSheetState(
         ModalBottomSheetValue.Hidden
     )
+    var sheetType by remember { mutableStateOf(SheetType.DeviceList) }
     val bluetoothState = viewModel.bluetoothState.collectAsState()
 
     val device = viewModel.selectedDevice.collectAsState()
@@ -161,22 +171,30 @@ fun MainScreen(
         sheetState = sheetState,
         sheetShape = RoundedCornerShape(topEnd = 16.dp, topStart = 16.dp),
         sheetContent = {
-            DeviceList(
-                state = bluetoothState.value,
-                connectedDevice = device.value,
-                onClickItem = { device ->
-                    scope.launch {
-                        sheetState.hide()
-                        viewModel.connect(device)
+            when (sheetType) {
+                SheetType.DeviceList -> DeviceList(
+                    state = bluetoothState.value,
+                    connectedDevice = device.value,
+                    onClickItem = { device ->
+                        scope.launch {
+                            sheetState.hide()
+                            viewModel.connect(device)
+                        }
+                    },
+                    onClickDisconnectDevice = {
+                        scope.launch {
+                            sheetState.hide()
+                            viewModel.disconnect()
+                        }
                     }
-                },
-                onClickDisconnectDevice = {
-                    scope.launch {
-                        sheetState.hide()
-                        viewModel.disconnect()
+                )
+                SheetType.CommandList -> {
+                    detectionResult?.detectionResults?.let {
+                        CommandList(detectionResults = it)
                     }
                 }
-            )
+            }
+
         },
     ) {
         Scaffold(
@@ -204,10 +222,33 @@ fun MainScreen(
                         .fillMaxWidth()
                 ) {
                     bitmap.value?.let {
-                        Image(
-                            bitmap = it.asImageBitmap(),
-                            contentDescription = null,
-                        )
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.BottomCenter
+                        ) {
+                            Image(
+                                bitmap = it.asImageBitmap(),
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxHeight()
+                            )
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.CenterStart
+                            ) {
+                                IconButton(onClick = {
+                                    scope.launch {
+                                        sheetType = SheetType.CommandList
+                                        sheetState.show()
+                                    }
+                                }) {
+                                    Icon(
+                                        Icons.Rounded.List,
+                                        contentDescription = null,
+                                        tint = Color.White,
+                                    )
+                                }
+                            }
+                        }
                     } ?: Column(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -260,7 +301,10 @@ fun MainScreen(
                             },
                             stringResource(id = R.string.main_button_connect),
                             onClick = {
-                                scope.launch { sheetState.show() }
+                                scope.launch {
+                                    sheetType = SheetType.DeviceList
+                                    sheetState.show()
+                                }
                                 viewModel.startSearchDevices()
                             },
                         )
@@ -318,4 +362,9 @@ fun MainScreenPreview() {
             )
         )
     }
+}
+
+private enum class SheetType() {
+    DeviceList,
+    CommandList
 }
