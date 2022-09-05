@@ -27,6 +27,8 @@ class CameraViewModel @Inject constructor(
     private val _result = MutableStateFlow<SealDetectionResult?>(null)
     val result: StateFlow<SealDetectionResult?> = _result
 
+    val threshold = settingsRepository.threshold
+
     fun createImageFile(): File {
         return repository.createImageFile()
     }
@@ -40,6 +42,7 @@ class CameraViewModel @Inject constructor(
     }
 
     fun detectSeals(path: String) {
+        _result.value = null
         val bitmap = repository.getCapturedImage(path)
 
         viewModelScope.launch(Dispatchers.IO) {

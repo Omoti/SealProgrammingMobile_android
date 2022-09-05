@@ -22,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.rememberImagePainter
@@ -38,10 +39,12 @@ fun CameraCaptured(
     onCanceled: () -> Unit = {},
     onCompleted: (result: SealDetectionResult) -> Unit = {},
 ) {
+    val context = LocalContext.current
     val result = viewModel.result.collectAsState()
+    val threshold = viewModel.threshold.collectAsState(0.0f)
 
-    LaunchedEffect(path) {
-        Log.d("CameraCaptured", "path: $path")
+    LaunchedEffect(path, threshold) {
+        Log.d("CameraCaptured", "path: $path, threshold: $threshold")
         viewModel.detectSeals(path)
     }
     Log.d("CameraCaptured", "resultImagePath: ${result.value}")
