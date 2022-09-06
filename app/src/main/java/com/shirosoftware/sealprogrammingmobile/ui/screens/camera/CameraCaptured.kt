@@ -149,7 +149,9 @@ fun CameraCaptured(
                             val updatedResult = viewModel.updateResult(it.imagePath)
                             onCompleted.invoke(updatedResult)
                         }
-                    })
+                    },
+                    enabled = result.value != null
+                )
 
                 // リトライ
                 CircleButton(
