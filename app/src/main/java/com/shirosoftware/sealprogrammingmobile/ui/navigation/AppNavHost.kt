@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.shirosoftware.sealprogrammingmobile.ui.screens.camera.CameraScreen
+import com.shirosoftware.sealprogrammingmobile.ui.screens.info.InfoScreen
 import com.shirosoftware.sealprogrammingmobile.ui.screens.main.MainScreen
 import com.shirosoftware.sealprogrammingmobile.ui.screens.settings.SettingsScreen
 
@@ -28,7 +29,16 @@ fun AppNavHost(navController: NavHostController, sharedViewModel: SharedViewMode
                 onClickCamera = {
                     navController.navigate("camera")
                 },
+                onClickInfo = {
+                    navController.navigate("info")
+                }
             )
+        }
+        composable("info") {
+            InfoScreen(
+                onBack = {
+                    navController.popBackStack()
+                })
         }
         composable("settings") {
             SettingsScreen(

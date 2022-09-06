@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.BluetoothConnected
 import androidx.compose.material.icons.filled.ElectricCar
 import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.rounded.List
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -88,6 +89,7 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     detectionResult: SealDetectionResult? = null,
     onClickCamera: () -> Unit = {},
+    onClickInfo: () -> Unit = {},
 ) {
     val toast = Toast.makeText(
         LocalContext.current,
@@ -178,6 +180,15 @@ fun MainScreen(
                     )
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Primary),
+                actions = {
+                    IconButton(onClick = onClickInfo) {
+                        androidx.compose.material.Icon(
+                            Icons.Outlined.Info,
+                            contentDescription = null,
+                            tint = Color.White,
+                        )
+                    }
+                }
             )
         },
     ) { innerPadding ->

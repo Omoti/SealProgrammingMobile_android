@@ -19,4 +19,8 @@
     <string name="settings_threshold_content">
         写真からシールを認識する際のしきい値を設定します。\nシールが認識されにくいときは、しきい値を下げてください。\nシール以外のものを誤って認識するときは、しきい値を上げてください。
     </string>
+
+    <!-- アプリ情報 -->
+    <string name="info_title">アプリ情報</string>
+    <string name="info_version">バージョン</string>
 </resources>
