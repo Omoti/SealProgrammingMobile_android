@@ -75,15 +75,18 @@ class SealDetector @Inject constructor(private val context: Context) {
             canvas.drawRect(box, pen)
 
             val tagSize = Rect(0, 0, 0, 0)
+            val scoreSize = Rect(0, 0, 0, 0)
 
             // calculate the right font size
             pen.style = Paint.Style.FILL_AND_STROKE
             pen.color = Color.YELLOW
             pen.strokeWidth = 2F
 
-            val text = "${it.index + 1}.${seal.text} ${it.value.score.times(100).toInt()}%"
+            val text = "${it.index + 1}.${seal.text}"
+            val score = "${it.value.score.times(100).toInt()}%"
             pen.textSize = MAX_FONT_SIZE
             pen.getTextBounds(text, 0, text.length, tagSize)
+            pen.getTextBounds(score, 0, score.length, scoreSize)
             val fontSize: Float = pen.textSize * box.width() / tagSize.width()
 
             // adjust the font size so texts are inside the bounding box
@@ -97,6 +100,11 @@ class SealDetector @Inject constructor(private val context: Context) {
                 text, box.left + margin,
                 textTop, pen
             )
+            pen.textSize = box.width() / 5
+            canvas.drawText(
+                score, box.left + (box.width() / 2) - (scoreSize.width() / 2),
+                textTop + tagSize.height() + 20, pen
+            )
         }
         return outputBitmap
     }
@@ -107,6 +115,6 @@ class SealDetector @Inject constructor(private val context: Context) {
 
     companion object {
         private const val MODEL_FILE_NAME = "seals_model.tflite"
-        private const val MAX_FONT_SIZE = 48f
+        private const val MAX_FONT_SIZE = 88f
     }
 }
