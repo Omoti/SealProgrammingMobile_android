@@ -137,7 +137,8 @@ fun CameraPreview(
                         centerTo(parent)
                     },
                 onClick = {
-                    sound.play(MediaActionSound.SHUTTER_CLICK)
+                    // シャッター音
+                    //sound.play(MediaActionSound.SHUTTER_CLICK)
 
                     val outputOptions = ImageCapture.OutputFileOptions
                         .Builder(file)
