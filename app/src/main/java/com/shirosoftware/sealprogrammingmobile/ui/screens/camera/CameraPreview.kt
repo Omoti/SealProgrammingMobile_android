@@ -1,6 +1,7 @@
 package com.shirosoftware.sealprogrammingmobile.ui.screens.camera
 
 import android.content.Context
+import android.media.MediaActionSound
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -62,6 +63,7 @@ fun CameraPreview(
     val cameraSelector = CameraSelector.Builder()
         .requireLensFacing(lensFacing)
         .build()
+    val sound = remember { MediaActionSound() }
 
     var showGuide by remember {
         mutableStateOf(true)
@@ -135,6 +137,8 @@ fun CameraPreview(
                         centerTo(parent)
                     },
                 onClick = {
+                    sound.play(MediaActionSound.SHUTTER_CLICK)
+
                     val outputOptions = ImageCapture.OutputFileOptions
                         .Builder(file)
                         .build()
