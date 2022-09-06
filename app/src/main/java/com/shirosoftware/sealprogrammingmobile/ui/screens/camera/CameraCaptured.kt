@@ -94,10 +94,12 @@ fun CameraCaptured(
                     .weight(1.0f),
                 contentAlignment = Alignment.TopCenter,
             ) {
-                Image(
-                    bitmap.asImageBitmap(),
-                    contentDescription = null,
-                )
+                if (!bitmap.isRecycled) {
+                    Image(
+                        bitmap.asImageBitmap(),
+                        contentDescription = null,
+                    )
+                }
                 Box(
                     modifier = Modifier
                         .aspectRatio(3.0f / 4.0f)
