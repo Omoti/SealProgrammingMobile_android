@@ -62,8 +62,8 @@ fun CameraScreen(
                 CameraPreview(
                     file = viewModel.createImageFile(),
                     modifier = Modifier.padding(innerPadding),
-                    onCaptured = {
-                        viewModel.updateState(CameraState.Captured(it))
+                    onCaptured = { path, bitmap ->
+                        viewModel.updateState(CameraState.Captured(path, bitmap))
                     }
                 )
             }
@@ -71,6 +71,7 @@ fun CameraScreen(
                 CameraCaptured(
                     viewModel = viewModel,
                     path = _state.path,
+                    bitmap = _state.bitmap,
                     modifier = Modifier.padding(innerPadding),
                     onCanceled = {
                         viewModel.updateState(CameraState.Ready)

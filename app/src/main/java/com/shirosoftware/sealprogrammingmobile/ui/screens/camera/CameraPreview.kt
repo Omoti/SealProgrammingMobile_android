@@ -1,6 +1,8 @@
 package com.shirosoftware.sealprogrammingmobile.ui.screens.camera
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.media.MediaActionSound
 import android.util.Log
 import androidx.camera.core.CameraSelector
@@ -28,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,7 +42,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.content.ContextCompat
+import coil.ImageLoader
+import coil.request.ImageRequest
+import coil.request.SuccessResult
 import java.io.File
+import kotlinx.coroutines.launch
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -47,7 +54,7 @@ import kotlin.coroutines.suspendCoroutine
 fun CameraPreview(
     file: File,
     modifier: Modifier = Modifier,
-    onCaptured: (path: String) -> Unit = {},
+    onCaptured: (path: String, bitmap: Bitmap) -> Unit = { _: String, _: Bitmap -> },
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -64,6 +71,7 @@ fun CameraPreview(
         .requireLensFacing(lensFacing)
         .build()
     val sound = remember { MediaActionSound() }
+    val scope = rememberCoroutineScope()
 
     var showGuide by remember {
         mutableStateOf(true)
@@ -148,8 +156,23 @@ fun CameraPreview(
                         ContextCompat.getMainExecutor(context),
                         object : ImageCapture.OnImageSavedCallback {
                             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                                Log.d("CameraScreen", "Save a picture: Success")
-                                onCaptured.invoke(file.absolutePath)
+                                val loader = ImageLoader(context)
+                                val request = ImageRequest.Builder(context)
+                                    .data(outputFileResults.savedUri)
+                                    .allowHardware(false) // Disable hardware bitmaps.
+                                    .build()
+
+                                scope.launch {
+                                    val result = (loader.execute(request) as SuccessResult).drawable
+                                    val bitmap = (result as BitmapDrawable).bitmap
+
+                                    Log.d("CameraScreen", "Save a picture: Success")
+                                    onCaptured.invoke(
+                                        file.absolutePath,
+                                        bitmap.copy(Bitmap.Config.ARGB_8888, false)
+                                    )
+                                    bitmap.recycle()
+                                }
                             }
 
                             override fun onError(exception: ImageCaptureException) {
