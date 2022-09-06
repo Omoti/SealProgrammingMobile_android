@@ -258,7 +258,7 @@ fun MainScreen(
                                     IconButton(onClick = {
                                         scope.launch {
                                             sheetType = SheetType.CommandList
-                                            sheetState.show()
+                                            sheetState.animateTo(ModalBottomSheetValue.Expanded)
                                         }
                                     }) {
                                         Icon(

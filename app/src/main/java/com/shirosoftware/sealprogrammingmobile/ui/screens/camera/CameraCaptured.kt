@@ -121,7 +121,7 @@ fun CameraCaptured(
                     ),
                     onClick = {
                         scope.launch {
-                            sheetState.show()
+                            sheetState.animateTo(ModalBottomSheetValue.Expanded)
                         }
                     },
                     modifier = Modifier

@@ -48,7 +48,7 @@ fun CommandList(
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        LazyColumn {
+        LazyColumn(reverseLayout = true) {
             items(detectionResults.size) { index ->
                 val result = detectionResults[index]
                 val seal = sealByLabel(result.label)
