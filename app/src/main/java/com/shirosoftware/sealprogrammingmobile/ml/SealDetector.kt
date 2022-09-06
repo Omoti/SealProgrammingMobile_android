@@ -68,7 +68,7 @@ class SealDetector @Inject constructor(private val context: Context) {
             val seal = sealByLabel(it.value.label)
 
             // draw bounding box
-            pen.color = seal.color
+            pen.color = Color.YELLOW
             pen.strokeWidth = 8F
             pen.style = Paint.Style.STROKE
             val box = it.value.boundingBox
