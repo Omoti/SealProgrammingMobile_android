@@ -23,4 +23,5 @@
     <!-- アプリ情報 -->
     <string name="info_title">アプリ情報</string>
     <string name="info_version">バージョン</string>
+    <string name="info_license">オープンソースライセンス</string>
 </resources>

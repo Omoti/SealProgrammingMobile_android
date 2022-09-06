@@ -1,5 +1,6 @@
 package com.shirosoftware.sealprogrammingmobile.ui.screens.info
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
@@ -9,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,7 +25,11 @@ import com.shirosoftware.sealprogrammingmobile.ui.theme.Primary
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun InfoScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
+fun InfoScreen(
+    modifier: Modifier = Modifier,
+    onBack: () -> Unit,
+    onShowLicense: () -> Unit,
+) {
     val version = BuildConfig.VERSION_NAME
 
     Scaffold(modifier = modifier,
@@ -49,8 +55,17 @@ fun InfoScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
         }) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
             ListItem(
+                text = { Text(text = stringResource(id = R.string.info_license)) },
+                modifier = Modifier.clickable {
+                    onShowLicense.invoke()
+                }
+            )
+            Divider()
+            ListItem(
                 text = { Text(text = stringResource(id = R.string.info_version)) },
-                secondaryText = { Text(text = version) })
+                secondaryText = { Text(text = version) }
+            )
+            Divider()
         }
     }
 }

@@ -1,13 +1,16 @@
 package com.shirosoftware.sealprogrammingmobile.ui.navigation
 
+import android.content.Intent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.shirosoftware.sealprogrammingmobile.ui.screens.camera.CameraScreen
 import com.shirosoftware.sealprogrammingmobile.ui.screens.info.InfoScreen
 import com.shirosoftware.sealprogrammingmobile.ui.screens.main.MainScreen
@@ -16,6 +19,7 @@ import com.shirosoftware.sealprogrammingmobile.ui.screens.settings.SettingsScree
 @ExperimentalAnimationApi
 @Composable
 fun AppNavHost(navController: NavHostController, sharedViewModel: SharedViewModel) {
+    val context = LocalContext.current
     val detectionResult by sharedViewModel.result.collectAsState()
 
     AnimatedNavHost(
@@ -38,7 +42,11 @@ fun AppNavHost(navController: NavHostController, sharedViewModel: SharedViewMode
             InfoScreen(
                 onBack = {
                     navController.popBackStack()
-                })
+                },
+                onShowLicense = {
+                    context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
+                }
+            )
         }
         composable("settings") {
             SettingsScreen(

@@ -4,4 +4,8 @@
     <style name="Theme.SealProgrammingMobile" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@color/primary</item>
     </style>
+
+    <style name="Theme.LicenseTheme" parent="Theme.AppCompat.Light">
+        <item name="android:statusBarColor">@color/primary</item>
+    </style>
 </resources>
