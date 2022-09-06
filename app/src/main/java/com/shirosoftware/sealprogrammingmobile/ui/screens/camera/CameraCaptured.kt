@@ -8,8 +8,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
@@ -70,31 +71,44 @@ fun CameraCaptured(
         }) {
         Column(
             modifier = Modifier
-                .background(Color.Black)
+                .background(Color.Black),
         ) {
-            result.value?.let {
-                Image(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(3.0f / 4.0f),
-                    painter = rememberImagePainter(File(it.imagePath)),
-                    contentDescription = null,
-                )
-            } ?: Box(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(3.0f / 4.0f),
-                contentAlignment = Alignment.TopCenter
+                    .weight(1.0f),
+                contentAlignment = Alignment.TopCenter,
             ) {
-                LinearProgressIndicator(
+                result.value?.let {
+                    Box(
+                        modifier = Modifier
+                            .aspectRatio(3.0f / 4.0f)
+                            .fillMaxHeight(),
+                        contentAlignment = Alignment.TopCenter,
+                    ) {
+                        Image(
+                            painter = rememberImagePainter(File(it.imagePath)),
+                            contentDescription = null,
+                        )
+                    }
+                } ?: Box(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    color = Primary,
-                    trackColor = Color.Black,
-                )
+                        .aspectRatio(3.0f / 4.0f)
+                        .fillMaxHeight(),
+                    contentAlignment = Alignment.TopCenter
+                ) {
+                    LinearProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        color = Primary,
+                        trackColor = Color.Black,
+                    )
+                }
             }
             Row(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
