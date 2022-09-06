@@ -215,72 +215,88 @@ fun MainScreen(
             Column(
                 modifier = modifier
                     .fillMaxSize()
-                    .background(Color.White),
+                    .background(BackgroundDark),
             ) {
-                Box(
+                Column(
                     modifier = Modifier
-                        .aspectRatio(3.0f / 4.0f)
+                        .background(Color.White)
                         .fillMaxWidth()
+                        .weight(1.0f),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    bitmap.value?.let {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.BottomCenter
-                        ) {
-                            Image(
-                                bitmap = it.asImageBitmap(),
-                                contentDescription = null,
-                                modifier = Modifier.fillMaxHeight()
-                            )
+                    Box(
+                        modifier = Modifier
+                            .aspectRatio(3.0f / 4.0f)
+                            .fillMaxHeight(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        bitmap.value?.let {
                             Box(
-                                modifier = Modifier.fillMaxWidth(),
-                                contentAlignment = Alignment.CenterStart
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.BottomCenter
                             ) {
-                                IconButton(onClick = {
-                                    scope.launch {
-                                        sheetType = SheetType.CommandList
-                                        sheetState.show()
+                                Image(
+                                    bitmap = it.asImageBitmap(),
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxHeight()
+                                )
+                                Box(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    contentAlignment = Alignment.CenterStart
+                                ) {
+                                    IconButton(onClick = {
+                                        scope.launch {
+                                            sheetType = SheetType.CommandList
+                                            sheetState.show()
+                                        }
+                                    }) {
+                                        Icon(
+                                            Icons.Rounded.List,
+                                            contentDescription = null,
+                                            tint = Color.White,
+                                        )
                                     }
-                                }) {
-                                    Icon(
-                                        Icons.Rounded.List,
-                                        contentDescription = null,
-                                        tint = Color.White,
-                                    )
                                 }
                             }
+                        } ?: Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.White)
+                                .padding(24.dp)
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.main_welcome_title),
+                                fontSize = 20.sp,
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = stringResource(id = R.string.main_welcome_content),
+                                fontSize = 16.sp,
+                            )
+                            Spacer(modifier = Modifier.height(32.dp))
+                            Image(
+                                painter = painterResource(id = R.drawable.app_logo),
+                                contentDescription = null,
+                                contentScale = ContentScale.FillWidth,
+                                alignment = Alignment.TopCenter,
+                                modifier = Modifier.width(200.dp)
+                            )
                         }
-                    } ?: Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                    }
+                    Spacer(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(24.dp)
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.main_welcome_title),
-                            fontSize = 20.sp,
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = stringResource(id = R.string.main_welcome_content),
-                            fontSize = 16.sp,
-                        )
-                        Spacer(modifier = Modifier.height(32.dp))
-                        Image(
-                            painter = painterResource(id = R.drawable.app_logo),
-                            contentDescription = null,
-                            contentScale = ContentScale.FillWidth,
-                            alignment = Alignment.TopCenter,
-                            modifier = Modifier.width(200.dp)
-                        )
-                    }
+                            .background(BackgroundDark)
+                    )
                 }
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                     modifier = modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
+                        .height(150.dp)
                         .background(BackgroundDark)
                 ) {
                     Row(
