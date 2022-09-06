@@ -104,9 +104,9 @@ fun CameraPreview(
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .padding(12.dp)
+                        .padding(16.dp)
                         .aspectRatio(2.0f / 3.0f)
-                        .border(2.dp, Color.Red, RectangleShape)
+                        .border(1.dp, Color.Red, RectangleShape)
                 )
             }
         }
