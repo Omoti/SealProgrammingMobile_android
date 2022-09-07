@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">シールプログラミング</string>
 
     <!-- メイン -->
@@ -8,10 +8,15 @@
     <string name="main_welcome_title">シールプログラミングへようこそ</string>
     <string name="main_welcome_content">１．カメラでシールをとる\n２．カードックにつなぐ\n３．プログラムをおくる</string>
 
+    <!-- Bluetooth -->
     <string name="bluetooth_searching">デバイスをさがしています…</string>
     <string name="bluetooth_error">エラー</string>
-
     <string name="bluetooth_write_completed">プログラムをおくりました</string>
+    <string name="bluetooth_state_writing" tools:ignore="TypographyEllipsis">おくっています...</string>
+    <string name="bluetooth_state_connected">OK</string>
+    <string name="bluetooth_state_connecting" tools:ignore="TypographyEllipsis">つないでいます...</string>
+    <string name="bluetooth_state_disconnected">つながっていません</string>
+    <string name="bluetooth_state_error">エラー\nもういちどつないでください</string>
 
     <!-- 設定画面 -->
     <string name="settings_title">設定</string>

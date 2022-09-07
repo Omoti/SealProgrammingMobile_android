@@ -222,7 +222,6 @@ fun MainScreen(
                         }
                     }
                 }
-
             },
         ) {
             Column(
@@ -357,17 +356,17 @@ fun MainScreen(
                     Text(
                         text = device.value?.name?.let {
                             "$it : ${
-                                if (writing.value == WriteState.Writing) "送信中..."
+                                if (writing.value == WriteState.Writing) stringResource(id = R.string.bluetooth_state_writing)
                                 else
                                     when (connectionState.value) {
-                                        BluetoothConnectionState.Connected -> "接続済"
-                                        BluetoothConnectionState.Connecting -> "接続中..."
-                                        BluetoothConnectionState.Disconnected -> "未接続"
-                                        BluetoothConnectionState.Writing -> "送信中..."
-                                        is BluetoothConnectionState.Error -> "エラー"
+                                        BluetoothConnectionState.Connected -> stringResource(id = R.string.bluetooth_state_connected)
+                                        BluetoothConnectionState.Connecting -> stringResource(id = R.string.bluetooth_state_connecting)
+                                        BluetoothConnectionState.Disconnected -> stringResource(id = R.string.bluetooth_state_disconnected)
+                                        BluetoothConnectionState.Writing -> stringResource(id = R.string.bluetooth_state_writing)
+                                        is BluetoothConnectionState.Error -> stringResource(id = R.string.bluetooth_state_error)
                                     }
                             }"
-                        } ?: "未選択",
+                        } ?: "つないでいません",
                         textAlign = TextAlign.Center,
                         style = TextStyle(fontSize = 12.sp),
                         modifier = Modifier
