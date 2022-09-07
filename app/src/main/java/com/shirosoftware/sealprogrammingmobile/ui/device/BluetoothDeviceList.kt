@@ -1,4 +1,4 @@
-package com.shirosoftware.sealprogrammingmobile.ui.screens.main
+package com.shirosoftware.sealprogrammingmobile.ui.device
 
 import android.bluetooth.BluetoothDevice
 import androidx.compose.foundation.clickable

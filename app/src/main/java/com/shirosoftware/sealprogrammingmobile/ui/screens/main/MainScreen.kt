@@ -70,6 +70,8 @@ import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnect
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
+import com.shirosoftware.sealprogrammingmobile.ui.device.DeviceList
+import com.shirosoftware.sealprogrammingmobile.ui.device.WriteState
 import com.shirosoftware.sealprogrammingmobile.ui.screens.commands.CommandList
 import com.shirosoftware.sealprogrammingmobile.ui.theme.BackgroundDark
 import com.shirosoftware.sealprogrammingmobile.ui.theme.Primary

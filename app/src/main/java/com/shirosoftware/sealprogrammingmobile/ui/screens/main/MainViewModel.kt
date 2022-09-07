@@ -8,6 +8,8 @@ import com.shirosoftware.sealprogrammingmobile.converter.DetectionResultsConvert
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.ml.DetectionResult
 import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
+import com.shirosoftware.sealprogrammingmobile.ui.device.BluetoothState
+import com.shirosoftware.sealprogrammingmobile.ui.device.WriteState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.delay

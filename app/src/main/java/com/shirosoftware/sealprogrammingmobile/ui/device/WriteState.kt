@@ -1,4 +1,4 @@
-package com.shirosoftware.sealprogrammingmobile.ui.screens.main
+package com.shirosoftware.sealprogrammingmobile.ui.device
 
 sealed class WriteState {
     object Ready : WriteState()
