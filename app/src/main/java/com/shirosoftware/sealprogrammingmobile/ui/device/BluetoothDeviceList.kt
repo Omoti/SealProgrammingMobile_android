@@ -1,7 +1,6 @@
 package com.shirosoftware.sealprogrammingmobile.ui.device
 
 import android.bluetooth.BluetoothDevice
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
@@ -115,7 +115,6 @@ fun DeviceList(
 fun DeviceItem(name: String, mac: String, isBonded: Boolean, onClick: () -> Unit) {
     ListItem(
         modifier = Modifier
-            .clickable { onClick.invoke() }
             .padding(8.dp),
         icon = {
             if (isBonded) Icon(
@@ -124,6 +123,11 @@ fun DeviceItem(name: String, mac: String, isBonded: Boolean, onClick: () -> Unit
             )
         },
         secondaryText = { Text(text = mac, color = Color.Gray, fontSize = 12.sp) },
+        trailing = {
+            Button(onClick = onClick) {
+                Text(text = "つなぐ")
+            }
+        }
     ) {
         Text(text = name)
     }
@@ -143,8 +147,14 @@ fun ConnectedDeviceItem(name: String, mac: String, onDisconnectClick: () -> Unit
         },
         secondaryText = { Text(text = mac, color = Color.Gray, fontSize = 12.sp) },
         trailing = {
-            Button(onClick = onDisconnectClick) {
-                Text(text = "切断")
+            Button(
+                onClick = onDisconnectClick,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Red,
+                    contentColor = Color.White,
+                ),
+            ) {
+                Text(text = "きる")
             }
         }
     ) {
