@@ -42,14 +42,28 @@ class SealDetector @Inject constructor(private val context: Context) {
             // Create a data object to display the detection result
             DetectionResult(it.boundingBox, label, score)
         }
-
+        
         // 左下から列ごとに並び替え
-        // 左右位置に重みをつける
-        return resultToDisplay.sortedWith(compareBy {
-            it.boundingBox.left * 10 + (bitmap.height - it.boundingBox.top)
-        })
+        return resultToDisplay.sortedWith(CompareResultPosition)
     }
 
+    class CompareResultPosition {
+        companion object : Comparator<DetectionResult> {
+            override fun compare(result1: DetectionResult, result2: DetectionResult): Int {
+                // 左右位置が重なったら上下で比較
+                if ((result1.boundingBox.left > result2.boundingBox.left
+                            && result1.boundingBox.left < result2.boundingBox.right)
+                    || (result1.boundingBox.left < result2.boundingBox.right
+                            && result1.boundingBox.right > result2.boundingBox.left)
+                ) {
+                    return (result2.boundingBox.top - result1.boundingBox.top).toInt()
+                }
+
+                // 上記以外は左右位置で比較
+                return (result1.boundingBox.left - result2.boundingBox.left).toInt()
+            }
+        }
+    }
 
     /**
      * drawDetectionResult(bitmap: Bitmap, detectionResults: List<DetectionResult>
