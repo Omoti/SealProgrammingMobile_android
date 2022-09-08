@@ -13,6 +13,7 @@ import kotlin.math.floor
 class SettingsViewModel @Inject constructor(private val repository: SettingsRepository) :
     ViewModel() {
     val threshold = repository.threshold
+    val showScore = repository.showScore
 
     fun updateThreshold(value: Float) {
         Log.d("SettingsViewModel", "update: $value")
@@ -21,6 +22,12 @@ class SettingsViewModel @Inject constructor(private val repository: SettingsRepo
         Log.d("SettingsViewModel", "update ceil: $ceilValue")
         viewModelScope.launch {
             repository.updateThreshold(ceilValue)
+        }
+    }
+
+    fun updateShowScore(value: Boolean) {
+        viewModelScope.launch {
+            repository.updateShowScore(value)
         }
     }
 }

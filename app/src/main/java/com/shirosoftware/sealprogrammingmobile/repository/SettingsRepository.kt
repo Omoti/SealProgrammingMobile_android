@@ -9,4 +9,9 @@ class SettingsRepository @Inject constructor(private val dataStore: SettingsData
     suspend fun updateThreshold(value: Float) {
         dataStore.updateThreshold(value)
     }
+
+    val showScore: Flow<Boolean> = dataStore.showScore
+    suspend fun updateShowScore(value: Boolean) {
+        dataStore.updateShowScore(value)
+    }
 }

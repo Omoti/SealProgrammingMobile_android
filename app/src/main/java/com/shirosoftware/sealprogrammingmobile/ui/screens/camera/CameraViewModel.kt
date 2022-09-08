@@ -47,10 +47,11 @@ class CameraViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             val threshold = settingsRepository.threshold.first()
+            val showScore = settingsRepository.showScore.first()
 
             bitmap?.let {
                 val detectionResults = sealDetector.runObjectDetection(bitmap, threshold)
-                sealDetector.drawDetectionResult(bitmap, detectionResults, false).also {
+                sealDetector.drawDetectionResult(bitmap, detectionResults, showScore).also {
                     _result.value =
                         SealDetectionResult(
                             repository.saveBitmap(it).absolutePath,
