@@ -71,7 +71,8 @@ class SealDetector @Inject constructor(private val context: Context) {
      */
     fun drawDetectionResult(
         bitmap: Bitmap,
-        detectionResults: List<DetectionResult>
+        detectionResults: List<DetectionResult>,
+        showScore: Boolean,
     ): Bitmap {
         val outputBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
         val canvas = Canvas(outputBitmap)
@@ -97,10 +98,9 @@ class SealDetector @Inject constructor(private val context: Context) {
             pen.strokeWidth = 2F
 
             val text = "${it.index + 1}.${seal.text}"
-            val score = "${it.value.score.times(100).toInt()}%"
+
             pen.textSize = MAX_FONT_SIZE
             pen.getTextBounds(text, 0, text.length, tagSize)
-            pen.getTextBounds(score, 0, score.length, scoreSize)
             val fontSize: Float = pen.textSize * box.width() / tagSize.width()
 
             // adjust the font size so texts are inside the bounding box
@@ -114,11 +114,17 @@ class SealDetector @Inject constructor(private val context: Context) {
                 text, box.left + margin,
                 textTop, pen
             )
-            pen.textSize = box.width() / 5
-            canvas.drawText(
-                score, box.left + (box.width() / 2) - (scoreSize.width() / 2),
-                textTop + tagSize.height() + 20, pen
-            )
+
+            // スコア
+            if (showScore) {
+                val score = "${it.value.score.times(100).toInt()}%"
+                pen.getTextBounds(score, 0, score.length, scoreSize)
+                pen.textSize = box.width() / 5
+                canvas.drawText(
+                    score, box.left + (box.width() / 2) - (scoreSize.width() / 2),
+                    textTop + tagSize.height() + 20, pen
+                )
+            }
         }
         return outputBitmap
     }
