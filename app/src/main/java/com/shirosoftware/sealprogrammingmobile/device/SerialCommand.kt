@@ -15,8 +15,7 @@ class SerialCommand {
         const val light = "C"
 
         // -- D: 「停止」をコマンドバッファに追加。
-        // 本来Dだが本アプリでは点滅のBに置き換える
-        const val stop = "B" // "D"
+        const val stop = "D"
 
         // -- E: 「ゴール」をコマンドバッファに追加。
         const val goal = "E"

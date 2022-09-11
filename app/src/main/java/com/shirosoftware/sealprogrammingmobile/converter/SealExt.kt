@@ -9,7 +9,7 @@ fun Seal.toSerialCommand(): String {
         Seal.Back -> SerialCommand.back
         Seal.Left -> SerialCommand.left
         Seal.Right -> SerialCommand.right
-        Seal.Stop -> SerialCommand.stop
+        Seal.Stop -> SerialCommand.blink // 停止時に点滅させる
         Seal.Light -> SerialCommand.light
         Seal.Horn -> SerialCommand.horn
     }
