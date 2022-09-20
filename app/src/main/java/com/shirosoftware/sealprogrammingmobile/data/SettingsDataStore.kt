@@ -15,16 +15,16 @@ class SettingsDataStore @Inject constructor(val context: Context) {
             preferences[KEY_THRESHOLD] ?: DEFAULT_THRESHOLD
         }
 
-    val showScore: Flow<Boolean> = context.dataStore.data
-        .map { preferences ->
-            preferences[KEY_SHOW_SCORE] ?: false
-        }
-
     suspend fun updateThreshold(value: Float) {
         context.dataStore.edit { settings ->
             settings[KEY_THRESHOLD] = value
         }
     }
+
+    val showScore: Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            preferences[KEY_SHOW_SCORE] ?: false
+        }
 
     suspend fun updateShowScore(value: Boolean) {
         context.dataStore.edit { settings ->
