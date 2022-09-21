@@ -13,12 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.PhotoCamera
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -27,7 +24,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,7 +40,6 @@ import com.shirosoftware.sealprogrammingmobile.ui.screens.commands.CommandList
 import com.shirosoftware.sealprogrammingmobile.ui.theme.Primary
 import java.io.File
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CameraCaptured(
     viewModel: CameraViewModel,
@@ -56,11 +51,6 @@ fun CameraCaptured(
 ) {
     val result = viewModel.result.collectAsState()
     val threshold = viewModel.threshold.collectAsState(0.0f)
-
-    val scope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState(
-        ModalBottomSheetValue.Hidden
-    )
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
