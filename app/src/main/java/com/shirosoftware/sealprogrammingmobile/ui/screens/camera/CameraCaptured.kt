@@ -14,10 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -85,32 +83,25 @@ fun CameraCaptured(
 
     Log.d("CameraCaptured", "resultImagePath: ${result.value}")
 
-    ModalBottomSheetLayout(
-        modifier = modifier,
-        sheetState = sheetState,
-        sheetShape = RoundedCornerShape(topEnd = 16.dp, topStart = 16.dp),
-        sheetContent = {
-            CommandList(detectionResults = result.value?.detectionResults ?: listOf())
-        }) {
-        Column(
+    Column(
+        modifier = modifier.background(Color.Black),
+    ) {
+        SegmentedButtons(
+            labels = listOf("シール", "リスト"),
             modifier = Modifier
-                .background(Color.Black),
+                .fillMaxWidth()
+                .height(40.dp)
+                .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 8.dp),
         ) {
-            SegmentedButtons(
-                labels = listOf("シール", "リスト"),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(40.dp)
-                    .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 8.dp),
-            ) {
-                selectedIndex = 0
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1.0f),
-                contentAlignment = Alignment.TopCenter,
-            ) {
+            selectedIndex = it
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1.0f),
+            contentAlignment = Alignment.TopCenter,
+        ) {
+            if (selectedIndex == 0) {
                 if (!bitmap.isRecycled) {
                     Image(
                         bitmap.asImageBitmap(),
@@ -135,55 +126,65 @@ fun CameraCaptured(
                         trackColor = Color.Black,
                     )
                 }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .aspectRatio(3.0f / 4.0f)
+                        .fillMaxHeight()
+                        .background(Color.White),
+                    contentAlignment = Alignment.BottomCenter,
+                ) {
+                    CommandList(detectionResults = result.value?.detectionResults ?: listOf())
+                }
             }
-            Row(
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            // リスト
+            CircleButton(
+                icon = Icons.Default.List,
+                text = "リスト",
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Black,
+                ),
+                onClick = {
+                    scope.launch {
+                        sheetState.animateTo(ModalBottomSheetValue.Expanded)
+                    }
+                },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                // リスト
-                CircleButton(
-                    icon = Icons.Default.List,
-                    text = "リスト",
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Black,
-                    ),
-                    onClick = {
-                        scope.launch {
-                            sheetState.animateTo(ModalBottomSheetValue.Expanded)
-                        }
-                    },
-                    modifier = Modifier
-                        .width(100.dp),
-                )
+                    .width(100.dp),
+            )
 
-                // OK
-                CircleButton(
-                    icon = Icons.Default.Check,
-                    text = "OK",
-                    onClick = {
-                        result.value?.let {
-                            val updatedResult = viewModel.updateResult(it.imagePath)
-                            onCompleted.invoke(updatedResult)
-                        }
-                    },
-                    enabled = result.value != null
-                )
+            // OK
+            CircleButton(
+                icon = Icons.Default.Check,
+                text = "OK",
+                onClick = {
+                    result.value?.let {
+                        val updatedResult = viewModel.updateResult(it.imagePath)
+                        onCompleted.invoke(updatedResult)
+                    }
+                },
+                enabled = result.value != null
+            )
 
-                // リトライ
-                CircleButton(
-                    icon = Icons.Default.PhotoCamera,
-                    text = "とりなおす",
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Black,
-                    ),
-                    onClick = onCanceled,
-                    modifier = Modifier
-                        .width(100.dp),
-                )
-            }
+            // リトライ
+            CircleButton(
+                icon = Icons.Default.PhotoCamera,
+                text = "とりなおす",
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Black,
+                ),
+                onClick = onCanceled,
+                modifier = Modifier
+                    .width(100.dp),
+            )
         }
     }
 }
