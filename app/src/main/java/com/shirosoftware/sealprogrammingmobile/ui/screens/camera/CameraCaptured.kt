@@ -78,7 +78,7 @@ fun CameraCaptured(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 32.dp, top = 8.dp, end = 32.dp, bottom = 8.dp)
-                .height(24.dp),
+                .height(23.dp),
         ) {
             selectedIndex = it
         }
@@ -128,7 +128,7 @@ fun CameraCaptured(
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(150.dp)
+                .height(144.dp)
         ) {
             val (okButton, retakeButton) = createRefs()
 

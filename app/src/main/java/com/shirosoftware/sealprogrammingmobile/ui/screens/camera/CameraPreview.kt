@@ -136,7 +136,7 @@ fun CameraPreview(
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(150.dp)
+                .height(144.dp)
         ) {
             val (shutterButton, switchButton) = createRefs()
 

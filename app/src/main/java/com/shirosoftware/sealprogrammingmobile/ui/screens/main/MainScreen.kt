@@ -236,6 +236,7 @@ fun MainScreen(
                     SegmentedButtons(
                         labels = listOf("シール", "リスト"),
                         modifier = Modifier
+                            .fillMaxWidth()
                             .padding(start = 32.dp, top = 8.dp, end = 32.dp, bottom = 8.dp)
                             .height(24.dp),
                     ) {
@@ -333,7 +334,7 @@ fun MainScreen(
                     verticalArrangement = Arrangement.Center,
                     modifier = modifier
                         .fillMaxWidth()
-                        .height(150.dp)
+                        .height(144.dp)
                         .background(BackgroundDark)
                 ) {
                     Row(
