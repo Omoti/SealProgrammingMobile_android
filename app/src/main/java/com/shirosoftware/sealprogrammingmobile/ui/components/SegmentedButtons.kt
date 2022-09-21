@@ -1,6 +1,7 @@
 package com.shirosoftware.sealprogrammingmobile.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
@@ -68,6 +69,7 @@ fun SegmentedButtons(
                             .offset((-1 * index).dp, 0.dp)
                             .zIndex(if (selectedIndex == index) 1f else 0f)
                 }.weight(1.0f),
+                contentPadding = PaddingValues(0.dp),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = if (selectedIndex == index) color else Color.Transparent,
                 ),

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
@@ -28,7 +29,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.shirosoftware.sealprogrammingmobile.data.SealDetectionResult
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
+import com.shirosoftware.sealprogrammingmobile.ui.components.SegmentedButtons
 import com.shirosoftware.sealprogrammingmobile.ui.screens.commands.CommandList
 import com.shirosoftware.sealprogrammingmobile.ui.theme.Primary
 import java.io.File
@@ -62,6 +68,8 @@ fun CameraCaptured(
     )
 
     val lifecycleOwner = LocalLifecycleOwner.current
+
+    var selectedIndex by remember { mutableStateOf(0) }
 
     LaunchedEffect(path, threshold) {
         Log.d("CameraCaptured", "path: $path, threshold: $threshold")
@@ -88,6 +96,15 @@ fun CameraCaptured(
             modifier = Modifier
                 .background(Color.Black),
         ) {
+            SegmentedButtons(
+                labels = listOf("シール", "リスト"),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp)
+                    .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 8.dp),
+            ) {
+                selectedIndex = 0
+            }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

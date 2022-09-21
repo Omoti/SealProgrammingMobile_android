@@ -102,6 +102,7 @@ fun CameraPreview(
                 .weight(1.0f),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            Spacer(modifier = Modifier.height(40.dp))
             Box(
                 contentAlignment = Alignment.TopCenter,
                 modifier = Modifier
