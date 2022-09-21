@@ -30,11 +30,9 @@ import androidx.compose.material.icons.filled.BluetoothConnected
 import androidx.compose.material.icons.filled.ElectricCar
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.rounded.List
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -106,7 +104,6 @@ fun MainScreen(
     val sheetState = rememberModalBottomSheetState(
         ModalBottomSheetValue.Hidden
     )
-    var sheetType by remember { mutableStateOf(SheetType.DeviceList) }
     val bluetoothState = viewModel.bluetoothState.collectAsState()
 
     val device = viewModel.selectedDevice.collectAsState()
@@ -201,29 +198,22 @@ fun MainScreen(
             sheetState = sheetState,
             sheetShape = RoundedCornerShape(topEnd = 16.dp, topStart = 16.dp),
             sheetContent = {
-                when (sheetType) {
-                    SheetType.DeviceList -> DeviceList(
-                        state = bluetoothState.value,
-                        connectedDevice = device.value,
-                        onClickItem = { device ->
-                            scope.launch {
-                                sheetState.hide()
-                                viewModel.connect(device)
-                            }
-                        },
-                        onClickDisconnectDevice = {
-                            scope.launch {
-                                sheetState.hide()
-                                viewModel.disconnect()
-                            }
+                DeviceList(
+                    state = bluetoothState.value,
+                    connectedDevice = device.value,
+                    onClickItem = { device ->
+                        scope.launch {
+                            sheetState.hide()
+                            viewModel.connect(device)
                         }
-                    )
-                    SheetType.CommandList -> {
-                        detectionResult?.detectionResults?.let {
-                            CommandList(detectionResults = it)
+                    },
+                    onClickDisconnectDevice = {
+                        scope.launch {
+                            sheetState.hide()
+                            viewModel.disconnect()
                         }
                     }
-                }
+                )
             },
         ) {
             Column(
@@ -264,33 +254,11 @@ fun MainScreen(
                     ) {
                         bitmap.value?.let {
                             if (selectedIndex == 0) {
-                                Box(
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.BottomCenter
-                                ) {
-                                    Image(
-                                        bitmap = it.asImageBitmap(),
-                                        contentDescription = null,
-                                        modifier = Modifier.fillMaxHeight()
-                                    )
-                                    Box(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        contentAlignment = Alignment.CenterStart
-                                    ) {
-                                        IconButton(onClick = {
-                                            scope.launch {
-                                                sheetType = SheetType.CommandList
-                                                sheetState.animateTo(ModalBottomSheetValue.Expanded)
-                                            }
-                                        }) {
-                                            Icon(
-                                                Icons.Rounded.List,
-                                                contentDescription = null,
-                                                tint = Color.White,
-                                            )
-                                        }
-                                    }
-                                }
+                                Image(
+                                    bitmap = it.asImageBitmap(),
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxHeight()
+                                )
                             } else {
                                 detectionResult?.detectionResults?.let {
                                     CommandList(detectionResults = it)
@@ -357,7 +325,6 @@ fun MainScreen(
                             stringResource(id = R.string.main_button_connect),
                             onClick = {
                                 scope.launch {
-                                    sheetType = SheetType.DeviceList
                                     sheetState.show()
                                 }
                                 viewModel.startSearchDevices()
@@ -417,9 +384,4 @@ fun MainScreenPreview() {
             )
         )
     }
-}
-
-private enum class SheetType() {
-    DeviceList,
-    CommandList
 }
