@@ -70,6 +70,7 @@ import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnect
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
+import com.shirosoftware.sealprogrammingmobile.ui.components.SegmentedButtons
 import com.shirosoftware.sealprogrammingmobile.ui.device.DeviceList
 import com.shirosoftware.sealprogrammingmobile.ui.device.WriteState
 import com.shirosoftware.sealprogrammingmobile.ui.screens.commands.CommandList
@@ -111,6 +112,8 @@ fun MainScreen(
     val device = viewModel.selectedDevice.collectAsState()
     val connectionState = viewModel.connectionState.collectAsState()
     val writing = viewModel.writing.collectAsState()
+
+    var selectedIndex by remember { mutableStateOf(0) }
 
     val permissionState =
         rememberMultiplePermissionsState(
@@ -171,7 +174,6 @@ fun MainScreen(
         detectionResult?.let { viewModel.loadCapturedImage(detectionResult.imagePath) }
     }
 
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -228,7 +230,24 @@ fun MainScreen(
                 modifier = modifier
                     .fillMaxSize()
                     .background(BackgroundDark),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                if (bitmap.value != null) {
+                    SegmentedButtons(
+                        labels = listOf("シール", "リスト"),
+                        modifier = Modifier
+                            .padding(start = 32.dp, top = 8.dp, end = 32.dp, bottom = 8.dp)
+                            .height(24.dp),
+                    ) {
+                        selectedIndex = it
+                    }
+                } else {
+                    Spacer(
+                        modifier = Modifier
+                            .padding(start = 32.dp, top = 8.dp, end = 32.dp, bottom = 8.dp)
+                            .height(24.dp)
+                    )
+                }
                 Column(
                     modifier = Modifier
                         .background(Color.White)
@@ -243,31 +262,37 @@ fun MainScreen(
                         contentAlignment = Alignment.Center,
                     ) {
                         bitmap.value?.let {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.BottomCenter
-                            ) {
-                                Image(
-                                    bitmap = it.asImageBitmap(),
-                                    contentDescription = null,
-                                    modifier = Modifier.fillMaxHeight()
-                                )
+                            if (selectedIndex == 0) {
                                 Box(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    contentAlignment = Alignment.CenterStart
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.BottomCenter
                                 ) {
-                                    IconButton(onClick = {
-                                        scope.launch {
-                                            sheetType = SheetType.CommandList
-                                            sheetState.animateTo(ModalBottomSheetValue.Expanded)
+                                    Image(
+                                        bitmap = it.asImageBitmap(),
+                                        contentDescription = null,
+                                        modifier = Modifier.fillMaxHeight()
+                                    )
+                                    Box(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        contentAlignment = Alignment.CenterStart
+                                    ) {
+                                        IconButton(onClick = {
+                                            scope.launch {
+                                                sheetType = SheetType.CommandList
+                                                sheetState.animateTo(ModalBottomSheetValue.Expanded)
+                                            }
+                                        }) {
+                                            Icon(
+                                                Icons.Rounded.List,
+                                                contentDescription = null,
+                                                tint = Color.White,
+                                            )
                                         }
-                                    }) {
-                                        Icon(
-                                            Icons.Rounded.List,
-                                            contentDescription = null,
-                                            tint = Color.White,
-                                        )
                                     }
+                                }
+                            } else {
+                                detectionResult?.detectionResults?.let {
+                                    CommandList(detectionResults = it)
                                 }
                             }
                         } ?: Column(

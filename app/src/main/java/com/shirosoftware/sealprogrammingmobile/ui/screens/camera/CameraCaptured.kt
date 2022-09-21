@@ -77,8 +77,8 @@ fun CameraCaptured(
             labels = listOf("シール", "リスト"),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(40.dp)
-                .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 8.dp),
+                .padding(start = 32.dp, top = 8.dp, end = 32.dp, bottom = 8.dp)
+                .height(24.dp),
         ) {
             selectedIndex = it
         }
