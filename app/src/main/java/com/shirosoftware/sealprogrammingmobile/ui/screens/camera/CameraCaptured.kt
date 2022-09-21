@@ -4,10 +4,8 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +17,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.LinearProgressIndicator
@@ -38,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.rememberImagePainter
 import com.shirosoftware.sealprogrammingmobile.data.SealDetectionResult
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
@@ -45,7 +43,6 @@ import com.shirosoftware.sealprogrammingmobile.ui.components.SegmentedButtons
 import com.shirosoftware.sealprogrammingmobile.ui.screens.commands.CommandList
 import com.shirosoftware.sealprogrammingmobile.ui.theme.Primary
 import java.io.File
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -138,31 +135,19 @@ fun CameraCaptured(
                 }
             }
         }
-        Row(
+        ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(150.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically,
+                .height(150.dp)
         ) {
-            // リスト
-            CircleButton(
-                icon = Icons.Default.List,
-                text = "リスト",
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Black,
-                ),
-                onClick = {
-                    scope.launch {
-                        sheetState.animateTo(ModalBottomSheetValue.Expanded)
-                    }
-                },
-                modifier = Modifier
-                    .width(100.dp),
-            )
+            val (okButton, retakeButton) = createRefs()
 
             // OK
             CircleButton(
+                modifier = Modifier
+                    .constrainAs(okButton) {
+                        centerTo(parent)
+                    },
                 icon = Icons.Default.Check,
                 text = "OK",
                 onClick = {
@@ -183,7 +168,12 @@ fun CameraCaptured(
                 ),
                 onClick = onCanceled,
                 modifier = Modifier
-                    .width(100.dp),
+                    .width(100.dp)
+                    .constrainAs(retakeButton) {
+                        centerVerticallyTo(parent)
+                        start.linkTo(okButton.end)
+                        end.linkTo(parent.end)
+                    },
             )
         }
     }
