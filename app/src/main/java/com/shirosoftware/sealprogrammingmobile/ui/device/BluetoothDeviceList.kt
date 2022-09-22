@@ -32,13 +32,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.shirosoftware.sealprogrammingmobile.R
 import com.shirosoftware.sealprogrammingmobile.domain.Device
-import com.shirosoftware.sealprogrammingmobile.domain.DeviceState
+import com.shirosoftware.sealprogrammingmobile.domain.DeviceDiscoveryState
 import com.shirosoftware.sealprogrammingmobile.ui.theme.Primary
 import com.shirosoftware.sealprogrammingmobile.ui.theme.SealProgrammingMobileTheme
 
 @Composable
 fun DeviceList(
-    state: DeviceState,
+    state: DeviceDiscoveryState,
     connectedDevice: Device?,
     onClickItem: (device: Device) -> Unit,
     onClickDisconnectDevice: () -> Unit,
@@ -71,7 +71,7 @@ fun DeviceList(
         }
 
         when (state) {
-            is DeviceState.Searching -> {
+            is DeviceDiscoveryState.Searching -> {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -80,10 +80,10 @@ fun DeviceList(
                     CircularProgressIndicator()
                 }
             }
-            is DeviceState.Error -> Text(
+            is DeviceDiscoveryState.Error -> Text(
                 text = state.throwable.message ?: stringResource(id = R.string.bluetooth_error)
             )
-            is DeviceState.Found ->
+            is DeviceDiscoveryState.Found ->
                 LazyColumn {
                     items(state.devices.size) { index ->
                         val device = state.devices[index]
@@ -167,7 +167,7 @@ fun ConnectedDeviceItem(name: String, mac: String, onDisconnectClick: () -> Unit
 @Composable
 fun DeviceListPreview_Searching() {
     SealProgrammingMobileTheme {
-        DeviceList(state = DeviceState.Searching, null, {}, {})
+        DeviceList(state = DeviceDiscoveryState.Searching, null, {}, {})
     }
 }
 
@@ -176,7 +176,7 @@ fun DeviceListPreview_Searching() {
 fun DeviceListPreview_Find() {
     SealProgrammingMobileTheme {
         DeviceList(
-            state = DeviceState.Found(
+            state = DeviceDiscoveryState.Found(
                 listOf()
             ),
             null,
@@ -190,7 +190,7 @@ fun DeviceListPreview_Find() {
 @Composable
 fun DeviceListPreview_Error() {
     SealProgrammingMobileTheme {
-        DeviceList(state = DeviceState.Error(Throwable("エラー")), null, {}, {})
+        DeviceList(state = DeviceDiscoveryState.Error(Throwable("エラー")), null, {}, {})
     }
 }
 

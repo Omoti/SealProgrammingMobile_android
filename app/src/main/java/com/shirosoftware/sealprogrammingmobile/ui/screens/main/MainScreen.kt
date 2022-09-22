@@ -105,7 +105,7 @@ fun MainScreen(
     val sheetState = rememberModalBottomSheetState(
         ModalBottomSheetValue.Hidden
     )
-    val bluetoothState = viewModel.deviceState.collectAsState()
+    val bluetoothState = viewModel.discoveryState.collectAsState()
 
     val device = viewModel.selectedDevice.collectAsState()
     val connectionState = viewModel.connectionState.collectAsState()

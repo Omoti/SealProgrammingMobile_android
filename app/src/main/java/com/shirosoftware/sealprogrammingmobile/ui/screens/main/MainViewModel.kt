@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shirosoftware.sealprogrammingmobile.converter.DetectionResultsConverter
 import com.shirosoftware.sealprogrammingmobile.domain.Device
-import com.shirosoftware.sealprogrammingmobile.domain.DeviceState
+import com.shirosoftware.sealprogrammingmobile.domain.DeviceDiscoveryState
 import com.shirosoftware.sealprogrammingmobile.ml.DetectionResult
 import com.shirosoftware.sealprogrammingmobile.repository.DeviceRepository
 import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
@@ -25,8 +25,9 @@ class MainViewModel @Inject constructor(
     private val _bitmap = MutableStateFlow<Bitmap?>(null)
     val bitmap: StateFlow<Bitmap?> = _bitmap
 
-    private val _deviceState = MutableStateFlow<DeviceState>(DeviceState.Searching)
-    val deviceState: StateFlow<DeviceState> = _deviceState
+    private val _discoveryState =
+        MutableStateFlow<DeviceDiscoveryState>(DeviceDiscoveryState.Searching)
+    val discoveryState: StateFlow<DeviceDiscoveryState> = _discoveryState
 
     private val _selectedDevice = MutableStateFlow<Device?>(null)
     val selectedDevice: StateFlow<Device?> = _selectedDevice
@@ -43,7 +44,7 @@ class MainViewModel @Inject constructor(
     fun startSearchDevices() {
         viewModelScope.launch {
             deviceRepository.devices.collect {
-                _deviceState.value = DeviceState.Found(it)
+                _discoveryState.value = DeviceDiscoveryState.Found(it)
             }
 
             deviceRepository.startDiscovery()
@@ -52,7 +53,7 @@ class MainViewModel @Inject constructor(
 
     fun stopSearchDevices() {
         deviceRepository.cancelDiscovery()
-        _deviceState.value = DeviceState.Searching
+        _discoveryState.value = DeviceDiscoveryState.Searching
     }
 
     fun connect(device: Device) {
