@@ -6,6 +6,7 @@ import com.shirosoftware.sealprogrammingmobile.data.SettingsDataStore
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnection
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
+import com.shirosoftware.sealprogrammingmobile.repository.DeviceRepository
 import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
 import com.shirosoftware.sealprogrammingmobile.repository.SettingsRepository
 import dagger.Module
@@ -43,6 +44,11 @@ class Modules {
     @Provides
     fun provideBluetoothConnection(): BluetoothConnection {
         return BluetoothConnection()
+    }
+
+    @Provides
+    fun provideDeviceRepository(bluetoothController: BluetoothController): DeviceRepository {
+        return DeviceRepository(bluetoothController)
     }
 
     @Provides
