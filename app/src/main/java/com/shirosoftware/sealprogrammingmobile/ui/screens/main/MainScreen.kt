@@ -66,6 +66,7 @@ import com.shirosoftware.sealprogrammingmobile.data.SealDetectionResult
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnection
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.domain.DeviceConnectionState
+import com.shirosoftware.sealprogrammingmobile.repository.DeviceRepository
 import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
 import com.shirosoftware.sealprogrammingmobile.ui.components.SegmentedButtons
@@ -104,7 +105,7 @@ fun MainScreen(
     val sheetState = rememberModalBottomSheetState(
         ModalBottomSheetValue.Hidden
     )
-    val bluetoothState = viewModel.bluetoothState.collectAsState()
+    val bluetoothState = viewModel.deviceState.collectAsState()
 
     val device = viewModel.selectedDevice.collectAsState()
     val connectionState = viewModel.connectionState.collectAsState()
@@ -379,7 +380,7 @@ fun MainScreenPreview() {
     SealProgrammingMobileTheme {
         MainScreen(
             MainViewModel(
-                BluetoothController(context, BluetoothConnection()),
+                DeviceRepository(BluetoothController(context, BluetoothConnection())),
                 ImageRepository(ImageDataSource((context))),
             )
         )

@@ -1,6 +1,5 @@
 package com.shirosoftware.sealprogrammingmobile.ui.device
 
-import android.bluetooth.BluetoothDevice
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,14 +31,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.shirosoftware.sealprogrammingmobile.R
+import com.shirosoftware.sealprogrammingmobile.domain.Device
+import com.shirosoftware.sealprogrammingmobile.domain.DeviceState
 import com.shirosoftware.sealprogrammingmobile.ui.theme.Primary
 import com.shirosoftware.sealprogrammingmobile.ui.theme.SealProgrammingMobileTheme
 
 @Composable
 fun DeviceList(
-    state: BluetoothState,
-    connectedDevice: BluetoothDevice?,
-    onClickItem: (device: BluetoothDevice) -> Unit,
+    state: DeviceState,
+    connectedDevice: Device?,
+    onClickItem: (device: Device) -> Unit,
     onClickDisconnectDevice: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -70,7 +71,7 @@ fun DeviceList(
         }
 
         when (state) {
-            is BluetoothState.Searching -> {
+            is DeviceState.Searching -> {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -79,17 +80,17 @@ fun DeviceList(
                     CircularProgressIndicator()
                 }
             }
-            is BluetoothState.Error -> Text(
+            is DeviceState.Error -> Text(
                 text = state.throwable.message ?: stringResource(id = R.string.bluetooth_error)
             )
-            is BluetoothState.Found ->
+            is DeviceState.Found ->
                 LazyColumn {
                     items(state.devices.size) { index ->
                         val device = state.devices[index]
                         DeviceItem(
                             device.name ?: device.address,
                             device.address,
-                            device.bondState == BluetoothDevice.BOND_BONDED,
+                            device.bonded,
                         ) {
                             onClickItem(device)
                         }
@@ -166,7 +167,7 @@ fun ConnectedDeviceItem(name: String, mac: String, onDisconnectClick: () -> Unit
 @Composable
 fun DeviceListPreview_Searching() {
     SealProgrammingMobileTheme {
-        DeviceList(state = BluetoothState.Searching, null, {}, {})
+        DeviceList(state = DeviceState.Searching, null, {}, {})
     }
 }
 
@@ -175,7 +176,7 @@ fun DeviceListPreview_Searching() {
 fun DeviceListPreview_Find() {
     SealProgrammingMobileTheme {
         DeviceList(
-            state = BluetoothState.Found(
+            state = DeviceState.Found(
                 listOf()
             ),
             null,
@@ -189,7 +190,7 @@ fun DeviceListPreview_Find() {
 @Composable
 fun DeviceListPreview_Error() {
     SealProgrammingMobileTheme {
-        DeviceList(state = BluetoothState.Error(Throwable("エラー")), null, {}, {})
+        DeviceList(state = DeviceState.Error(Throwable("エラー")), null, {}, {})
     }
 }
 

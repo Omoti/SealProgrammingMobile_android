@@ -1,14 +1,14 @@
 package com.shirosoftware.sealprogrammingmobile.ui.screens.main
 
-import android.bluetooth.BluetoothDevice
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shirosoftware.sealprogrammingmobile.converter.DetectionResultsConverter
-import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
+import com.shirosoftware.sealprogrammingmobile.domain.Device
+import com.shirosoftware.sealprogrammingmobile.domain.DeviceState
 import com.shirosoftware.sealprogrammingmobile.ml.DetectionResult
+import com.shirosoftware.sealprogrammingmobile.repository.DeviceRepository
 import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
-import com.shirosoftware.sealprogrammingmobile.ui.device.BluetoothState
 import com.shirosoftware.sealprogrammingmobile.ui.device.WriteState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -19,19 +19,19 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val bluetoothController: BluetoothController,
+    private val deviceRepository: DeviceRepository,
     private val imageRepository: ImageRepository,
 ) : ViewModel() {
     private val _bitmap = MutableStateFlow<Bitmap?>(null)
     val bitmap: StateFlow<Bitmap?> = _bitmap
 
-    private val _bluetoothState = MutableStateFlow<BluetoothState>(BluetoothState.Searching)
-    val bluetoothState: StateFlow<BluetoothState> = _bluetoothState
+    private val _deviceState = MutableStateFlow<DeviceState>(DeviceState.Searching)
+    val deviceState: StateFlow<DeviceState> = _deviceState
 
-    private val _selectedDevice = MutableStateFlow<BluetoothDevice?>(null)
-    val selectedDevice: StateFlow<BluetoothDevice?> = _selectedDevice
+    private val _selectedDevice = MutableStateFlow<Device?>(null)
+    val selectedDevice: StateFlow<Device?> = _selectedDevice
 
-    val connectionState = bluetoothController.connectionState
+    val connectionState = deviceRepository.connectionState
 
     private val _writing = MutableStateFlow<WriteState>(WriteState.Ready)
     val writing: StateFlow<WriteState> = _writing
@@ -42,24 +42,24 @@ class MainViewModel @Inject constructor(
 
     fun startSearchDevices() {
         viewModelScope.launch {
-            bluetoothController.devices.collect {
-                _bluetoothState.value = BluetoothState.Found(it)
+            deviceRepository.devices.collect {
+                _deviceState.value = DeviceState.Found(it)
             }
 
-            bluetoothController.startDiscovery()
+            deviceRepository.startDiscovery()
         }
     }
 
     fun stopSearchDevices() {
-        bluetoothController.cancelDiscovery()
-        _bluetoothState.value = BluetoothState.Searching
+        deviceRepository.cancelDiscovery()
+        _deviceState.value = DeviceState.Searching
     }
 
-    fun connect(device: BluetoothDevice) {
+    fun connect(device: Device) {
         _selectedDevice.value = device
 
         viewModelScope.launch {
-            bluetoothController.connect(device)
+            deviceRepository.connect(device)
         }
     }
 
@@ -67,7 +67,7 @@ class MainViewModel @Inject constructor(
         _selectedDevice.value = null
 
         viewModelScope.launch {
-            bluetoothController.disconnect()
+            deviceRepository.disconnect()
         }
     }
 
@@ -77,7 +77,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             _writing.emit(WriteState.Writing)
 
-            bluetoothController.write(commands)
+            deviceRepository.write(commands)
 
             // 演出のためのdelay
             delay(500)
