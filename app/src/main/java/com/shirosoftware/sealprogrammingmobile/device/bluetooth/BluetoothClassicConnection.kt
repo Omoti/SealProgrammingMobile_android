@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 
-class BluetoothConnection {
+class BluetoothClassicConnection {
     private var socket: BluetoothSocket? = null
 
     private val _state =

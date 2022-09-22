@@ -63,8 +63,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.shirosoftware.sealprogrammingmobile.R
 import com.shirosoftware.sealprogrammingmobile.camera.ImageDataSource
 import com.shirosoftware.sealprogrammingmobile.data.SealDetectionResult
-import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnection
-import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
+import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothClassicController
 import com.shirosoftware.sealprogrammingmobile.domain.DeviceConnectionState
 import com.shirosoftware.sealprogrammingmobile.repository.DeviceRepository
 import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
@@ -108,7 +107,8 @@ fun MainScreen(
     val bluetoothState = viewModel.discoveryState.collectAsState()
 
     val device = viewModel.selectedDevice.collectAsState()
-    val connectionState = viewModel.connectionState.collectAsState()
+    val connectionState =
+        viewModel.connectionState.collectAsState(DeviceConnectionState.Disconnected)
     val writing = viewModel.writing.collectAsState()
 
     var selectedIndex by remember { mutableStateOf(0) }
@@ -380,7 +380,7 @@ fun MainScreenPreview() {
     SealProgrammingMobileTheme {
         MainScreen(
             MainViewModel(
-                DeviceRepository(BluetoothController(context, BluetoothConnection())),
+                DeviceRepository(BluetoothClassicController(context)),
                 ImageRepository(ImageDataSource((context))),
             )
         )

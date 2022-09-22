@@ -1,23 +1,13 @@
 package com.shirosoftware.sealprogrammingmobile.repository
 
-import android.bluetooth.BluetoothDevice
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.domain.Device
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class DeviceRepository(
     private val bluetoothController: BluetoothController,
 ) {
-    val devices: Flow<List<Device>> = bluetoothController.devices.map { devices ->
-        devices.map {
-            Device(
-                it.name,
-                it.address,
-                it.bondState == BluetoothDevice.BOND_BONDED
-            )
-        }
-    }
+    val devices: Flow<List<Device>> = bluetoothController.devices
 
     val connectionState = bluetoothController.connectionState
 
