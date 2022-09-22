@@ -102,8 +102,10 @@ class BluetoothController(
         }
     }
 
-    suspend fun connect(device: BluetoothDevice) {
-        connection.connect(device)
+    suspend fun connect(address: String) {
+        _devices.find { it.address == address }?.let {
+            connection.connect(it)
+        }
     }
 
     suspend fun disconnect() {

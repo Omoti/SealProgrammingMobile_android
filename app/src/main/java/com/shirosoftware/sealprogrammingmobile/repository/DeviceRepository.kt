@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothDevice
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.domain.Device
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class DeviceRepository(
@@ -31,13 +30,7 @@ class DeviceRepository(
     }
 
     suspend fun connect(device: Device) {
-        val bluetoothDevice = bluetoothController.devices.first().find {
-            it.address == device.address
-        }
-
-        bluetoothDevice?.let {
-            bluetoothController.connect(it)
-        }
+        bluetoothController.connect(device.address)
     }
 
     suspend fun disconnect() {
