@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.util.Log
 import androidx.annotation.RequiresPermission
+import com.shirosoftware.sealprogrammingmobile.domain.DeviceConnectionState
 import java.io.IOException
 import java.util.*
 import kotlinx.coroutines.Dispatchers
@@ -15,8 +16,8 @@ class BluetoothConnection {
     private var socket: BluetoothSocket? = null
 
     private val _state =
-        MutableStateFlow<BluetoothConnectionState>(BluetoothConnectionState.Disconnected)
-    val state: StateFlow<BluetoothConnectionState> = _state
+        MutableStateFlow<DeviceConnectionState>(DeviceConnectionState.Disconnected)
+    val state: StateFlow<DeviceConnectionState> = _state
 
     @RequiresPermission
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -28,18 +29,18 @@ class BluetoothConnection {
             device.createBond()
         }
 
-        _state.emit(BluetoothConnectionState.Connecting)
+        _state.emit(DeviceConnectionState.Connecting)
 
         withContext(Dispatchers.IO) {
             try {
                 socket = device.createInsecureRfcommSocketToServiceRecord(UUID_SERIAL)
                 socket?.connect()
-                _state.emit(BluetoothConnectionState.Connected)
+                _state.emit(DeviceConnectionState.Connected)
                 Log.d(TAG, "Connected")
             } catch (e: IOException) {
                 socket?.close()
                 socket = null
-                _state.emit(BluetoothConnectionState.Error(e))
+                _state.emit(DeviceConnectionState.Error(e))
                 Log.d(TAG, "Error: ${e.message}")
             }
         }
@@ -51,11 +52,11 @@ class BluetoothConnection {
             try {
                 socket?.close()
                 socket = null
-                _state.emit(BluetoothConnectionState.Disconnected)
+                _state.emit(DeviceConnectionState.Disconnected)
                 Log.d(TAG, "Disconnected")
             } catch (e: IOException) {
                 socket = null
-                _state.emit(BluetoothConnectionState.Disconnected)
+                _state.emit(DeviceConnectionState.Disconnected)
                 Log.d(TAG, "Disconnected: ${e.message}")
             }
         }
@@ -65,13 +66,13 @@ class BluetoothConnection {
     suspend fun write(command: String) {
         socket ?: return
 
-        _state.emit(BluetoothConnectionState.Writing)
+        _state.emit(DeviceConnectionState.Writing)
 
         withContext(Dispatchers.IO) {
             val outputStream = socket?.outputStream
             outputStream?.write(command.toByteArray())
 
-            _state.emit(BluetoothConnectionState.Connected)
+            _state.emit(DeviceConnectionState.Connected)
         }
     }
 

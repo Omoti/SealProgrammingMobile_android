@@ -13,6 +13,8 @@ class DeviceRepository(
         devices.map { Device(it.name, it.address) }
     }
 
+    val connectionState = bluetoothController.connectionState
+
     fun startDiscovery() {
         bluetoothController.startDiscovery()
     }

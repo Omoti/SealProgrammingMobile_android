@@ -64,8 +64,8 @@ import com.shirosoftware.sealprogrammingmobile.R
 import com.shirosoftware.sealprogrammingmobile.camera.ImageDataSource
 import com.shirosoftware.sealprogrammingmobile.data.SealDetectionResult
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnection
-import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothConnectionState
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
+import com.shirosoftware.sealprogrammingmobile.domain.DeviceConnectionState
 import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
 import com.shirosoftware.sealprogrammingmobile.ui.components.SegmentedButtons
@@ -317,7 +317,7 @@ fun MainScreen(
                                 onClickCamera.invoke()
                             })
                         CircleButton(
-                            if (connectionState.value == BluetoothConnectionState.Connected) {
+                            if (connectionState.value == DeviceConnectionState.Connected) {
                                 Icons.Default.BluetoothConnected
                             } else {
                                 Icons.Default.Bluetooth
@@ -341,7 +341,7 @@ fun MainScreen(
                                 disabledBackgroundColor = SecondaryDisable,
                             ),
                             enabled = (detectionResult != null
-                                    && connectionState.value == BluetoothConnectionState.Connected)
+                                    && connectionState.value == DeviceConnectionState.Connected)
                                     && writing.value != WriteState.Writing
                         )
                     }
@@ -352,11 +352,11 @@ fun MainScreen(
                                 if (writing.value == WriteState.Writing) stringResource(id = R.string.bluetooth_state_writing)
                                 else
                                     when (connectionState.value) {
-                                        BluetoothConnectionState.Connected -> stringResource(id = R.string.bluetooth_state_connected)
-                                        BluetoothConnectionState.Connecting -> stringResource(id = R.string.bluetooth_state_connecting)
-                                        BluetoothConnectionState.Disconnected -> stringResource(id = R.string.bluetooth_state_disconnected)
-                                        BluetoothConnectionState.Writing -> stringResource(id = R.string.bluetooth_state_writing)
-                                        is BluetoothConnectionState.Error -> stringResource(id = R.string.bluetooth_state_error)
+                                        DeviceConnectionState.Connected -> stringResource(id = R.string.bluetooth_state_connected)
+                                        DeviceConnectionState.Connecting -> stringResource(id = R.string.bluetooth_state_connecting)
+                                        DeviceConnectionState.Disconnected -> stringResource(id = R.string.bluetooth_state_disconnected)
+                                        DeviceConnectionState.Writing -> stringResource(id = R.string.bluetooth_state_writing)
+                                        is DeviceConnectionState.Error -> stringResource(id = R.string.bluetooth_state_error)
                                     }
                             }"
                         } ?: "つないでいません",
