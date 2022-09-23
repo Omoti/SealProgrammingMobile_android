@@ -10,7 +10,7 @@ class DetectionResultsConverter {
                 sealByLabel(it.label).toSerialCommand()
             }
 
-            return commands.toString()
+            return commands.joinToString("")
         }
 
         private fun sealByLabel(label: String): Seal {

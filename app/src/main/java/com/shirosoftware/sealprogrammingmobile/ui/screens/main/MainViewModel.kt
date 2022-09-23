@@ -12,7 +12,6 @@ import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
 import com.shirosoftware.sealprogrammingmobile.ui.device.WriteState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -79,9 +78,6 @@ class MainViewModel @Inject constructor(
             _writing.emit(WriteState.Writing)
 
             deviceRepository.write(commands)
-
-            // 演出のためのdelay
-            delay(500)
 
             _writing.emit(WriteState.Completed)
         }
