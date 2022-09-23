@@ -3,7 +3,7 @@ package com.shirosoftware.sealprogrammingmobile.di
 import android.content.Context
 import com.shirosoftware.sealprogrammingmobile.camera.ImageDataSource
 import com.shirosoftware.sealprogrammingmobile.data.SettingsDataStore
-import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothClassicController
+import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BleController
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothController
 import com.shirosoftware.sealprogrammingmobile.ml.SealDetector
 import com.shirosoftware.sealprogrammingmobile.repository.DeviceRepository
@@ -37,7 +37,7 @@ class Modules {
     fun provideBluetoothController(
         @ApplicationContext context: Context,
     ): BluetoothController {
-        return BluetoothClassicController(context)
+        return BleController(context)
     }
 
     @Provides
