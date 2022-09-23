@@ -59,7 +59,7 @@ fun DeviceList(
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        // 接続痛のデバイス
+        // 接続中のデバイス
         connectedDevice?.let {
             ConnectedDeviceItem(
                 name = connectedDevice.name,

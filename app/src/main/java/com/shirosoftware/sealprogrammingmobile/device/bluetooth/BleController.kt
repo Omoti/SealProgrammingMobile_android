@@ -116,9 +116,11 @@ class BleController(private val context: Context) : BluetoothController {
     }
 
     override suspend fun connect(address: String) {
+        _connectionState.value = DeviceConnectionState.Connecting
+
         _foundDevices.find {
             it.address == address
-        }?.connectGatt(context, true, connectCallback)
+        }?.connectGatt(context, false, connectCallback)
     }
 
     override suspend fun disconnect() {
