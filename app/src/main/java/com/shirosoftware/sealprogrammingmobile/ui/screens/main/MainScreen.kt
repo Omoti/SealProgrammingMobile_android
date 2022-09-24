@@ -3,7 +3,6 @@ package com.shirosoftware.sealprogrammingmobile.ui.screens.main
 import android.Manifest
 import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,11 +18,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.BluetoothConnected
@@ -95,11 +96,7 @@ fun MainScreen(
     onClickCamera: () -> Unit = {},
     onClickInfo: () -> Unit = {},
 ) {
-    val toast = Toast.makeText(
-        LocalContext.current,
-        stringResource(id = R.string.bluetooth_write_completed),
-        Toast.LENGTH_SHORT
-    )
+    var showDialog by remember { mutableStateOf(false) }
 
     val bitmap = viewModel.bitmap.collectAsState()
 
@@ -168,7 +165,7 @@ fun MainScreen(
     // 送信完了
     LaunchedEffect(writing.value) {
         if (writing.value == WriteState.Completed) {
-            toast.show()
+            showDialog = true
             viewModel.resetWriteState()
         }
     }
@@ -392,6 +389,25 @@ fun MainScreen(
                     )
                 }
             }
+        }
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = {
+                    showDialog = false
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showDialog = false
+                        }
+                    ) {
+                        Text("OK")
+                    }
+                },
+                text = {
+                    Text(stringResource(id = R.string.bluetooth_write_completed))
+                },
+            )
         }
     }
 }
