@@ -21,7 +21,10 @@ class BluetoothClassicController(
 
     private val bluetoothAdapter: BluetoothAdapter =
         context.getSystemService(BluetoothManager::class.java).adapter
-    private val _devices: MutableList<BluetoothDevice> = mutableListOf()
+
+    private val _foundBluetoothDevices: MutableList<BluetoothDevice> = mutableListOf()
+    private val _foundDevices: MutableStateFlow<List<Device>> = MutableStateFlow(listOf())
+    override val foundDevices: Flow<List<Device>> = _foundDevices
 
     private val _discoveryState =
         MutableStateFlow<DeviceDiscoveryState>(DeviceDiscoveryState.NotSearching)
@@ -35,15 +38,13 @@ class BluetoothClassicController(
 
     private var discoverCallback: DiscoverCallback = object : DiscoverCallback {
         override fun foundDevice(device: BluetoothDevice) {
-            _discoveryState.value = DeviceDiscoveryState.Found(
-                _devices.map {
-                    Device(
-                        it.name,
-                        it.address,
-                        it.bondState == BluetoothDevice.BOND_BONDED
-                    )
-                }
-            )
+            _foundDevices.value = _foundBluetoothDevices.map {
+                Device(
+                    it.name,
+                    it.address,
+                    it.bondState == BluetoothDevice.BOND_BONDED
+                )
+            }
         }
     }
 
@@ -68,7 +69,8 @@ class BluetoothClassicController(
     }
 
     override fun startDiscovery() {
-        _devices.clear()
+        _foundBluetoothDevices.clear()
+        _foundDevices.value = listOf()
         registerReceiver()
         bluetoothAdapter.startDiscovery()
         _discoveryState.value = DeviceDiscoveryState.Searching
@@ -95,8 +97,8 @@ class BluetoothClassicController(
                     device?.name?.let {
                         val deviceHardwareAddress = device.address // MAC address
 
-                        if (_devices.find { it.address == deviceHardwareAddress } == null) {
-                            _devices.add(device)
+                        if (_foundBluetoothDevices.find { it.address == deviceHardwareAddress } == null) {
+                            _foundBluetoothDevices.add(device)
                             discoverCallback?.foundDevice(device)
                         }
                     }
@@ -106,7 +108,7 @@ class BluetoothClassicController(
     }
 
     override suspend fun connect(address: String) {
-        _devices.find { it.address == address }?.let {
+        _foundBluetoothDevices.find { it.address == address }?.let {
             connection.connect(it)
         }
     }

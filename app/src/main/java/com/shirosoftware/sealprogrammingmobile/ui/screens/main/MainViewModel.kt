@@ -29,6 +29,8 @@ class MainViewModel @Inject constructor(
     private val _selectedDevice = MutableStateFlow<Device?>(null)
     val selectedDevice: StateFlow<Device?> = _selectedDevice
 
+    val foundDevices = deviceRepository.foundDevices
+
     val connectionState = deviceRepository.connectionState
 
     private val _writing = MutableStateFlow<WriteState>(WriteState.Ready)

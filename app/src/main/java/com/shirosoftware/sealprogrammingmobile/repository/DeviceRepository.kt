@@ -10,6 +10,8 @@ class DeviceRepository(
     val discoveryState = bluetoothController.discoveryState
     val connectionState = bluetoothController.connectionState
 
+    val foundDevices = bluetoothController.foundDevices
+
     fun startDiscovery() {
         Log.d("DeviceRepository", "startDiscovery")
         bluetoothController.startDiscovery()

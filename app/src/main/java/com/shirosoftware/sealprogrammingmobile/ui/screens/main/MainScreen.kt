@@ -108,6 +108,8 @@ fun MainScreen(
     val bluetoothState = viewModel.discoveryState.collectAsState(DeviceDiscoveryState.NotSearching)
 
     val device = viewModel.selectedDevice.collectAsState()
+    val foundDevices = viewModel.foundDevices.collectAsState(listOf())
+
     val connectionState =
         viewModel.connectionState.collectAsState(DeviceConnectionState.Disconnected)
     val writing = viewModel.writing.collectAsState()
@@ -203,6 +205,7 @@ fun MainScreen(
                 DeviceList(
                     state = bluetoothState.value,
                     connectedDevice = device.value,
+                    devices = foundDevices.value,
                     onClickItem = { device ->
                         scope.launch {
                             sheetState.hide()
@@ -329,6 +332,7 @@ fun MainScreen(
                                 scope.launch {
                                     sheetState.show()
                                 }
+
                             },
                         )
                         CircleButton(

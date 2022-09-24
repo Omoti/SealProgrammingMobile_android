@@ -40,6 +40,7 @@ import com.shirosoftware.sealprogrammingmobile.ui.theme.SealProgrammingMobileThe
 fun DeviceList(
     state: DeviceDiscoveryState,
     connectedDevice: Device?,
+    devices: List<Device>,
     onClickItem: (device: Device) -> Unit,
     onClickDisconnectDevice: () -> Unit,
     modifier: Modifier = Modifier,
@@ -70,44 +71,40 @@ fun DeviceList(
             Spacer(modifier = Modifier.height(12.dp))
         }
 
+        if (devices.isNotEmpty()) {
+            LazyColumn {
+                items(devices.size) { index ->
+                    val device = devices[index]
+                    DeviceItem(
+                        device.name,
+                        device.address,
+                        device.bonded,
+                    ) {
+                        onClickItem(device)
+                    }
+                    Divider()
+                }
+            }
+        } else {
+            Text(text = stringResource(id = R.string.bluetooth_searching))
+        }
+
         when (state) {
             is DeviceDiscoveryState.NotSearching -> {}
             is DeviceDiscoveryState.Searching -> {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                Spacer(modifier = Modifier.height(24.dp))
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
                 ) {
-                    Text(text = stringResource(id = R.string.bluetooth_searching))
-                    Spacer(modifier = Modifier.height(24.dp))
                     CircularProgressIndicator()
                 }
             }
             is DeviceDiscoveryState.Error -> Text(
                 text = state.throwable.message ?: stringResource(id = R.string.bluetooth_error)
             )
-            is DeviceDiscoveryState.Found ->
-                LazyColumn {
-                    items(state.devices.size) { index ->
-                        val device = state.devices[index]
-                        DeviceItem(
-                            device.name ?: device.address,
-                            device.address,
-                            device.bonded,
-                        ) {
-                            onClickItem(device)
-                        }
-                        Divider()
-                    }
-                    item {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(24.dp),
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
-                }
         }
     }
 }
@@ -168,22 +165,7 @@ fun ConnectedDeviceItem(name: String, mac: String, onDisconnectClick: () -> Unit
 @Composable
 fun DeviceListPreview_Searching() {
     SealProgrammingMobileTheme {
-        DeviceList(state = DeviceDiscoveryState.Searching, null, {}, {})
-    }
-}
-
-@Preview
-@Composable
-fun DeviceListPreview_Find() {
-    SealProgrammingMobileTheme {
-        DeviceList(
-            state = DeviceDiscoveryState.Found(
-                listOf()
-            ),
-            null,
-            {},
-            {},
-        )
+        DeviceList(state = DeviceDiscoveryState.Searching, null, listOf(), {}, {})
     }
 }
 
@@ -191,7 +173,7 @@ fun DeviceListPreview_Find() {
 @Composable
 fun DeviceListPreview_Error() {
     SealProgrammingMobileTheme {
-        DeviceList(state = DeviceDiscoveryState.Error(Throwable("エラー")), null, {}, {})
+        DeviceList(state = DeviceDiscoveryState.Error(Throwable("エラー")), null, listOf(), {}, {})
     }
 }
 

@@ -34,7 +34,9 @@ class BleController(private val context: Context) : BluetoothController {
 
     private var currentGatt: BluetoothGatt? = null
 
-    private val _foundDevices = mutableListOf<BluetoothDevice>()
+    private val _foundBluetoothDevices = mutableListOf<BluetoothDevice>()
+    private val _foundDevices: MutableStateFlow<List<Device>> = MutableStateFlow(listOf())
+    override val foundDevices: Flow<List<Device>> = _foundDevices
 
     private val scanner: BluetoothLeScanner? by lazy(LazyThreadSafetyMode.NONE) {
         val bluetoothManager =
@@ -47,17 +49,18 @@ class BleController(private val context: Context) : BluetoothController {
             super.onScanResult(callbackType, result)
 
             if (result.device.name != null &&
-                _foundDevices.find { it.address == result.device.address } == null
+                _foundBluetoothDevices.find { it.address == result.device.address } == null
             ) {
                 Log.d("BleController", "Found: ${result.device.name}")
-                _foundDevices.add(result.device)
-                _discoveryState.value = DeviceDiscoveryState.Found(_foundDevices.map { device ->
+                _foundBluetoothDevices.add(result.device)
+                _discoveryState.value = DeviceDiscoveryState.Searching
+                _foundDevices.value = _foundBluetoothDevices.map { device ->
                     Device(
                         device.name,
                         device.address,
                         device.bondState == BluetoothDevice.BOND_BONDED,
                     )
-                })
+                }
             }
         }
 
@@ -104,7 +107,8 @@ class BleController(private val context: Context) : BluetoothController {
 //            .build()
 
         _discoveryState.value = DeviceDiscoveryState.Searching
-        _foundDevices.clear()
+        _foundBluetoothDevices.clear()
+        _foundDevices.value = listOf()
         scanner?.startScan(scanCallback)
     }
 
@@ -116,7 +120,7 @@ class BleController(private val context: Context) : BluetoothController {
     override suspend fun connect(address: String) {
         _connectionState.value = DeviceConnectionState.Connecting
 
-        _foundDevices.find {
+        _foundBluetoothDevices.find {
             it.address == address
         }?.connectGatt(context, false, connectCallback)
     }
