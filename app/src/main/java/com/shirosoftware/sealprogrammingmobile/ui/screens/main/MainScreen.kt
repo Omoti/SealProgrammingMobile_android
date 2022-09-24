@@ -155,7 +155,7 @@ fun MainScreen(
     LaunchedEffect(sheetState.isVisible) {
         if (!permissionState.allPermissionsGranted) return@LaunchedEffect
         if (sheetState.isVisible) {
-            viewModel.startSearchDevices()
+            //viewModel.startSearchDevices()
         } else {
             viewModel.stopSearchDevices()
         }
@@ -348,10 +348,10 @@ fun MainScreen(
                             },
                             stringResource(id = R.string.main_button_connect),
                             onClick = {
+                                viewModel.startSearchDevices()
                                 scope.launch {
                                     sheetState.show()
                                 }
-
                             },
                         )
                         CircleButton(
