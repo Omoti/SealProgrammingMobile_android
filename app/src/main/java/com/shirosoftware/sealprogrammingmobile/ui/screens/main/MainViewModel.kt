@@ -10,12 +10,11 @@ import com.shirosoftware.sealprogrammingmobile.repository.DeviceRepository
 import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
 import com.shirosoftware.sealprogrammingmobile.ui.device.WriteState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.*
 import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -35,19 +34,26 @@ class MainViewModel @Inject constructor(
     private val _writing = MutableStateFlow<WriteState>(WriteState.Ready)
     val writing: StateFlow<WriteState> = _writing
 
+    private var scanTimer: Timer? = null
+
     fun loadCapturedImage(path: String) {
         _bitmap.value = imageRepository.getCapturedImage(path)
     }
 
     fun startSearchDevices() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                deviceRepository.startDiscovery()
+        deviceRepository.startDiscovery()
+
+        // 一定時間で自動停止
+        scanTimer = Timer()
+        scanTimer?.schedule(object : TimerTask() {
+            override fun run() {
+                deviceRepository.cancelDiscovery()
             }
-        }
+        }, 10000)
     }
 
     fun stopSearchDevices() {
+        scanTimer?.cancel()
         deviceRepository.cancelDiscovery()
     }
 
