@@ -10,9 +10,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import com.shirosoftware.sealprogrammingmobile.device.SerialCommand
 import com.shirosoftware.sealprogrammingmobile.domain.Device
-import kotlinx.coroutines.channels.awaitClose
+import com.shirosoftware.sealprogrammingmobile.domain.DeviceDiscoveryState
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class BluetoothClassicController(
     private val context: Context,
@@ -23,37 +23,27 @@ class BluetoothClassicController(
         context.getSystemService(BluetoothManager::class.java).adapter
     private val _devices: MutableList<BluetoothDevice> = mutableListOf()
 
+    private val _discoveryState =
+        MutableStateFlow<DeviceDiscoveryState>(DeviceDiscoveryState.NotSearching)
+    override val discoveryState: Flow<DeviceDiscoveryState> = _discoveryState
+
     override val connectionState = connection.state
 
     interface DiscoverCallback {
         fun foundDevice(device: BluetoothDevice)
     }
 
-    private var discoverCallback: DiscoverCallback? = null
-
-    override val devices: Flow<List<Device>> = callbackFlow {
-        _devices.clear()
-//        _devices.addAll(loadPairedDevices().toList())
-//        trySend(_devices)
-
-        discoverCallback = object : DiscoverCallback {
-            override fun foundDevice(device: BluetoothDevice) {
-                trySend(
-                    _devices.map {
-                        Device(
-                            it.name,
-                            it.address,
-                            it.bondState == BluetoothDevice.BOND_BONDED
-                        )
-                    }
-                )
-            }
-        }
-
-        startDiscovery()
-
-        awaitClose {
-            cancelDiscovery()
+    private var discoverCallback: DiscoverCallback = object : DiscoverCallback {
+        override fun foundDevice(device: BluetoothDevice) {
+            _discoveryState.value = DeviceDiscoveryState.Found(
+                _devices.map {
+                    Device(
+                        it.name,
+                        it.address,
+                        it.bondState == BluetoothDevice.BOND_BONDED
+                    )
+                }
+            )
         }
     }
 
@@ -78,13 +68,16 @@ class BluetoothClassicController(
     }
 
     override fun startDiscovery() {
+        _devices.clear()
         registerReceiver()
         bluetoothAdapter.startDiscovery()
+        _discoveryState.value = DeviceDiscoveryState.Searching
     }
 
     override fun cancelDiscovery() {
         unRegisterReceiver()
         bluetoothAdapter.cancelDiscovery()
+        _discoveryState.value = DeviceDiscoveryState.NotSearching
     }
 
     // Create a BroadcastReceiver for ACTION_FOUND.

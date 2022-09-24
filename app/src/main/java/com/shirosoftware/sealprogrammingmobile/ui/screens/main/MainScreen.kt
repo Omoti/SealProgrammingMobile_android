@@ -65,6 +65,7 @@ import com.shirosoftware.sealprogrammingmobile.camera.ImageDataSource
 import com.shirosoftware.sealprogrammingmobile.data.SealDetectionResult
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothClassicController
 import com.shirosoftware.sealprogrammingmobile.domain.DeviceConnectionState
+import com.shirosoftware.sealprogrammingmobile.domain.DeviceDiscoveryState
 import com.shirosoftware.sealprogrammingmobile.repository.DeviceRepository
 import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
@@ -104,7 +105,7 @@ fun MainScreen(
     val sheetState = rememberModalBottomSheetState(
         ModalBottomSheetValue.Hidden
     )
-    val bluetoothState = viewModel.discoveryState.collectAsState()
+    val bluetoothState = viewModel.discoveryState.collectAsState(DeviceDiscoveryState.NotSearching)
 
     val device = viewModel.selectedDevice.collectAsState()
     val connectionState =
@@ -328,7 +329,6 @@ fun MainScreen(
                                 scope.launch {
                                     sheetState.show()
                                 }
-                                viewModel.startSearchDevices()
                             },
                         )
                         CircleButton(

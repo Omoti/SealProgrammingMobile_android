@@ -71,6 +71,7 @@ fun DeviceList(
         }
 
         when (state) {
+            is DeviceDiscoveryState.NotSearching -> {}
             is DeviceDiscoveryState.Searching -> {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,

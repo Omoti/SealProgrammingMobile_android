@@ -10,65 +10,60 @@ import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.content.Context
+import android.util.Log
 import com.shirosoftware.sealprogrammingmobile.device.SerialCommand
 import com.shirosoftware.sealprogrammingmobile.domain.Device
 import com.shirosoftware.sealprogrammingmobile.domain.DeviceConnectionState
+import com.shirosoftware.sealprogrammingmobile.domain.DeviceDiscoveryState
 import java.nio.charset.Charset
 import java.util.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 
 class BleController(private val context: Context) : BluetoothController {
+    private val _discoveryState =
+        MutableStateFlow<DeviceDiscoveryState>(DeviceDiscoveryState.NotSearching)
+    override val discoveryState: Flow<DeviceDiscoveryState> = _discoveryState
+
     private val _connectionState =
         MutableStateFlow<DeviceConnectionState>(DeviceConnectionState.Disconnected)
     override val connectionState: Flow<DeviceConnectionState> = _connectionState
 
     private var currentGatt: BluetoothGatt? = null
 
-    private var scanCallback: ScanCallback? = null
     private val _foundDevices = mutableListOf<BluetoothDevice>()
-    override val devices: Flow<List<Device>> = callbackFlow {
-        _foundDevices.clear()
-
-        scanCallback = object : ScanCallback() {
-            override fun onScanResult(callbackType: Int, result: ScanResult) {
-                super.onScanResult(callbackType, result)
-
-                if (result.device.name != null &&
-                    _foundDevices.find { it.address == result.device.address } == null
-                ) {
-                    _foundDevices.add(result.device)
-                    trySend(_foundDevices.map { device ->
-                        Device(
-                            device.name,
-                            device.address,
-                            device.bondState == BluetoothDevice.BOND_BONDED,
-                        )
-                    })
-                }
-            }
-
-            override fun onBatchScanResults(results: List<ScanResult?>?) {
-                super.onBatchScanResults(results)
-            }
-        }
-
-        startDiscovery()
-
-        awaitClose {
-            cancelDiscovery()
-        }
-    }
 
     private val scanner: BluetoothLeScanner? by lazy(LazyThreadSafetyMode.NONE) {
         val bluetoothManager =
             context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         bluetoothManager.adapter.bluetoothLeScanner
+    }
+
+    private var scanCallback: ScanCallback = object : ScanCallback() {
+        override fun onScanResult(callbackType: Int, result: ScanResult) {
+            super.onScanResult(callbackType, result)
+
+            if (result.device.name != null &&
+                _foundDevices.find { it.address == result.device.address } == null
+            ) {
+                Log.d("BleController", "Found: ${result.device.name}")
+                _foundDevices.add(result.device)
+                _discoveryState.value = DeviceDiscoveryState.Found(_foundDevices.map { device ->
+                    Device(
+                        device.name,
+                        device.address,
+                        device.bondState == BluetoothDevice.BOND_BONDED,
+                    )
+                })
+            }
+        }
+
+        override fun onBatchScanResults(results: List<ScanResult?>?) {
+            super.onBatchScanResults(results)
+        }
     }
 
     private val connectCallback = object : BluetoothGattCallback() {
@@ -108,11 +103,14 @@ class BleController(private val context: Context) : BluetoothController {
 //        var scanFilter: ScanFilter = ScanFilter.Builder()
 //            .build()
 
+        _discoveryState.value = DeviceDiscoveryState.Searching
+        _foundDevices.clear()
         scanner?.startScan(scanCallback)
     }
 
     override fun cancelDiscovery() {
         scanner?.stopScan(scanCallback)
+        _discoveryState.value = DeviceDiscoveryState.NotSearching
     }
 
     override suspend fun connect(address: String) {

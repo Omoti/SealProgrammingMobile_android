@@ -5,16 +5,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shirosoftware.sealprogrammingmobile.converter.DetectionResultsConverter
 import com.shirosoftware.sealprogrammingmobile.domain.Device
-import com.shirosoftware.sealprogrammingmobile.domain.DeviceDiscoveryState
 import com.shirosoftware.sealprogrammingmobile.ml.DetectionResult
 import com.shirosoftware.sealprogrammingmobile.repository.DeviceRepository
 import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
 import com.shirosoftware.sealprogrammingmobile.ui.device.WriteState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -24,9 +25,7 @@ class MainViewModel @Inject constructor(
     private val _bitmap = MutableStateFlow<Bitmap?>(null)
     val bitmap: StateFlow<Bitmap?> = _bitmap
 
-    private val _discoveryState =
-        MutableStateFlow<DeviceDiscoveryState>(DeviceDiscoveryState.Searching)
-    val discoveryState: StateFlow<DeviceDiscoveryState> = _discoveryState
+    val discoveryState = deviceRepository.discoveryState
 
     private val _selectedDevice = MutableStateFlow<Device?>(null)
     val selectedDevice: StateFlow<Device?> = _selectedDevice
@@ -42,17 +41,14 @@ class MainViewModel @Inject constructor(
 
     fun startSearchDevices() {
         viewModelScope.launch {
-            deviceRepository.devices.collect {
-                _discoveryState.value = DeviceDiscoveryState.Found(it)
+            withContext(Dispatchers.IO) {
+                deviceRepository.startDiscovery()
             }
-
-            deviceRepository.startDiscovery()
         }
     }
 
     fun stopSearchDevices() {
         deviceRepository.cancelDiscovery()
-        _discoveryState.value = DeviceDiscoveryState.Searching
     }
 
     fun connect(device: Device) {
