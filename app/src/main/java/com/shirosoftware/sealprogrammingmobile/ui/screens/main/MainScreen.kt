@@ -217,7 +217,10 @@ fun MainScreen(
                             sheetState.hide()
                             viewModel.disconnect()
                         }
-                    }
+                    },
+                    onClickRescan = {
+                        viewModel.startSearchDevices()
+                    },
                 )
             },
         ) {

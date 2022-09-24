@@ -10,6 +10,8 @@
 
     <!-- Bluetooth -->
     <string name="bluetooth_searching">デバイスをさがしています…</string>
+    <string name="bluetooth_searching_not_found">みつかりませんでした</string>
+    <string name="bluetooth_retry">もういちどさがす</string>
     <string name="bluetooth_error">エラー</string>
     <string name="bluetooth_write_completed">プログラムをおくりました</string>
     <string name="bluetooth_state_writing" tools:ignore="TypographyEllipsis">おくっています...</string>

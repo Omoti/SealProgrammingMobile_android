@@ -1,7 +1,6 @@
 package com.shirosoftware.sealprogrammingmobile.ui.device
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,6 +42,7 @@ fun DeviceList(
     devices: List<Device>,
     onClickItem: (device: Device) -> Unit,
     onClickDisconnectDevice: () -> Unit,
+    onClickRescan: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -85,20 +85,37 @@ fun DeviceList(
                     Divider()
                 }
             }
-        } else {
-            Text(text = stringResource(id = R.string.bluetooth_searching))
         }
 
         when (state) {
-            is DeviceDiscoveryState.NotSearching -> {}
-            is DeviceDiscoveryState.Searching -> {
-                Spacer(modifier = Modifier.height(24.dp))
-                Box(
-                    contentAlignment = Alignment.Center,
+            is DeviceDiscoveryState.NotSearching -> {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(24.dp),
                 ) {
+                    if (devices.isEmpty()) {
+                        Text(text = stringResource(id = R.string.bluetooth_searching_not_found))
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+                    Button(onClick = onClickRescan) {
+                        Text(text = stringResource(id = R.string.bluetooth_retry))
+                    }
+                }
+            }
+            is DeviceDiscoveryState.Searching -> {
+                Spacer(modifier = Modifier.height(24.dp))
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
+                ) {
+                    if (devices.isEmpty()) {
+                        Text(text = stringResource(id = R.string.bluetooth_searching))
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
                     CircularProgressIndicator()
                 }
             }
@@ -165,7 +182,7 @@ fun ConnectedDeviceItem(name: String, mac: String, onDisconnectClick: () -> Unit
 @Composable
 fun DeviceListPreview_Searching() {
     SealProgrammingMobileTheme {
-        DeviceList(state = DeviceDiscoveryState.Searching, null, listOf(), {}, {})
+        DeviceList(state = DeviceDiscoveryState.Searching, null, listOf(), {}, {}, {})
     }
 }
 
@@ -173,7 +190,7 @@ fun DeviceListPreview_Searching() {
 @Composable
 fun DeviceListPreview_Error() {
     SealProgrammingMobileTheme {
-        DeviceList(state = DeviceDiscoveryState.Error(Throwable("エラー")), null, listOf(), {}, {})
+        DeviceList(state = DeviceDiscoveryState.Error(Throwable("エラー")), null, listOf(), {}, {}, {})
     }
 }
 
