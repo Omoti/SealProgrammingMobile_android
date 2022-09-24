@@ -99,6 +99,7 @@ class MainViewModel @Inject constructor(
 
         viewModelScope.launch {
             deviceRepository.disconnect()
+            settingsRepository.updateLastAddress("")
         }
     }
 
