@@ -45,7 +45,8 @@ class MainViewModel @Inject constructor(
         combine(
             settingsRepository.lastAddress, connectionState, ::Pair
         ).map { (address: String, state: DeviceConnectionState) ->
-            address.isNotEmpty() && state == DeviceConnectionState.Disconnected
+            // address.isNotEmpty() && state == DeviceConnectionState.Disconnected
+            false // Disable auto connect
         }
 
     private val _writing = MutableStateFlow<WriteState>(WriteState.Ready)
