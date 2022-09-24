@@ -14,4 +14,9 @@ class SettingsRepository @Inject constructor(private val dataStore: SettingsData
     suspend fun updateShowScore(value: Boolean) {
         dataStore.updateShowScore(value)
     }
+
+    val lastAddress: Flow<String> = dataStore.lastAddress
+    suspend fun updateLastAddress(value: String) {
+        dataStore.updateLastAddress(value)
+    }
 }
