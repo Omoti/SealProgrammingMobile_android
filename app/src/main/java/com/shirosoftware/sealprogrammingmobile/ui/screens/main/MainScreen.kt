@@ -63,11 +63,13 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.shirosoftware.sealprogrammingmobile.R
 import com.shirosoftware.sealprogrammingmobile.camera.ImageDataSource
 import com.shirosoftware.sealprogrammingmobile.data.SealDetectionResult
+import com.shirosoftware.sealprogrammingmobile.data.SettingsDataStore
 import com.shirosoftware.sealprogrammingmobile.device.bluetooth.BluetoothClassicController
 import com.shirosoftware.sealprogrammingmobile.domain.DeviceConnectionState
 import com.shirosoftware.sealprogrammingmobile.domain.DeviceDiscoveryState
 import com.shirosoftware.sealprogrammingmobile.repository.DeviceRepository
 import com.shirosoftware.sealprogrammingmobile.repository.ImageRepository
+import com.shirosoftware.sealprogrammingmobile.repository.SettingsRepository
 import com.shirosoftware.sealprogrammingmobile.ui.components.CircleButton
 import com.shirosoftware.sealprogrammingmobile.ui.components.SegmentedButtons
 import com.shirosoftware.sealprogrammingmobile.ui.device.DeviceList
@@ -136,6 +138,7 @@ fun MainScreen(
                 Manifest.permission.CAMERA
             ),
         )
+
     if (!permissionState.allPermissionsGranted) {
         SideEffect {
             permissionState.launchMultiplePermissionRequest()
@@ -173,6 +176,19 @@ fun MainScreen(
     LaunchedEffect(detectionResult) {
         Log.d("MainScreen", "imagePath: ${detectionResult?.imagePath}")
         detectionResult?.let { viewModel.loadCapturedImage(detectionResult.imagePath) }
+    }
+
+    // 自動再接続
+    val shouldAutoConnect by viewModel.shouldAutoConnect.collectAsState(initial = false)
+    LaunchedEffect(shouldAutoConnect) {
+        if (shouldAutoConnect) {
+            viewModel.startSearchDevices()
+        }
+    }
+    LaunchedEffect(foundDevices.value) {
+        if (shouldAutoConnect) {
+            viewModel.connectToLastDevice()
+        }
     }
 
     Scaffold(
@@ -389,6 +405,7 @@ fun MainScreenPreview() {
             MainViewModel(
                 DeviceRepository(BluetoothClassicController(context)),
                 ImageRepository(ImageDataSource((context))),
+                SettingsRepository(SettingsDataStore(context)),
             )
         )
     }
